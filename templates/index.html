@@ -695,8 +695,8 @@
     let html = '<table><thead><tr>';
     html += '<th class="th-section">Section</th>';
     html += '<th class="th-item">Menu Item</th>';
-    for (const col of columns) html += `<th class="th-allergen">${col}</th>`;
     if (showResult) html += '<th class="th-result">Result</th>';
+    for (const col of columns) html += `<th class="th-allergen">${col}</th>`;
     html += '<th class="th-notes">Notes</th></tr></thead><tbody>';
 
     for (const row of rows) {
@@ -705,8 +705,8 @@
       html += '<tr>';
       html += `<td class="td-section">${dot}${row.section}</td>`;
       html += `<td class="td-item">${row.name}</td>`;
-      for (const col of columns) html += `<td class="td-cell">${badge(row.values[col] || '')}</td>`;
       if (showResult) html += `<td class="td-result">${computeResult(row.values, columns)}</td>`;
+      for (const col of columns) html += `<td class="td-cell">${badge(row.values[col] || '')}</td>`;
       html += `<td class="td-notes">${row.notes || ''}</td>`;
       html += '</tr>';
     }
