@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    /* ──────────── Design tokens ──────────── */
+    /* ─── Design tokens ─── */
     :root {
       --bg:         #08090c;
       --surf-1:     #0f1118;
@@ -22,16 +22,15 @@
 
       --gold:       #c9a864;
       --gold-dim:   #7a6435;
+      --gold-tint:  rgba(201,168,100,.1);
+      --gold-ring:  rgba(201,168,100,.22);
 
-      /* allergen cell states */
       --red-bg:     #2a1418;
       --red:        #f07070;
       --amber-bg:   #261f10;
       --amber:      #e8ab4a;
       --orange-bg:  #221608;
       --orange:     #e08040;
-      --blue-bg:    #0e1a2e;
-      --blue:       #6ea9e8;
       --green-bg:   #0a1a14;
       --green:      #4caf82;
     }
@@ -46,435 +45,234 @@
       font-size: 13px;
     }
 
-    /* ──────────── Scrollbar ──────────── */
-    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar { width: 5px; height: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 3px; }
 
-    /* ──────────── Header ──────────── */
+    /* ─── Header ─── */
     header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      position: sticky; top: 0; z-index: 100;
       background: var(--surf-1);
       border-bottom: 1px solid var(--border);
-      padding: 0 28px;
-      height: 52px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
+      padding: 0 28px; height: 52px;
+      display: flex; align-items: center; justify-content: space-between; gap: 24px;
     }
-
-    .wordmark {
-      display: flex;
-      align-items: baseline;
-      gap: 10px;
-      flex-shrink: 0;
-    }
-
+    .wordmark { display: flex; align-items: baseline; gap: 10px; flex-shrink: 0; }
     .wordmark-name {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 15px;
-      font-weight: 600;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--gold);
+      font-size: 15px; font-weight: 600; letter-spacing: .18em;
+      text-transform: uppercase; color: var(--gold);
     }
+    .wordmark-sub { font-size: 11px; color: var(--text-3); letter-spacing: .06em; text-transform: uppercase; }
 
-    .wordmark-sub {
-      font-size: 11px;
-      color: var(--text-3);
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
+    .legend { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-2); white-space: nowrap; }
+    .legend-pip { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
 
-    /* legend */
-    .legend {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      flex-wrap: wrap;
-    }
+    /* ─── Layout ─── */
+    .main { padding: 20px 28px 40px; max-width: 1800px; margin: 0 auto; }
 
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      color: var(--text-2);
-      white-space: nowrap;
-    }
-
-    .legend-pip {
-      width: 8px;
-      height: 8px;
-      border-radius: 2px;
-      flex-shrink: 0;
-    }
-
-    /* ──────────── Main layout ──────────── */
-    .main {
-      padding: 20px 28px 40px;
-      max-width: 1800px;
-      margin: 0 auto;
-    }
-
-    /* ──────────── Selector row ──────────── */
     .selectors {
       display: grid;
-      grid-template-columns: 1fr 300px;
-      gap: 14px;
-      margin-bottom: 14px;
+      grid-template-columns: 1fr 340px;
+      gap: 14px; margin-bottom: 14px;
     }
 
-    /* ──────────── Panel shell ──────────── */
+    /* ─── Panel ─── */
     .panel {
-      background: var(--surf-1);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
+      background: var(--surf-1); border: 1px solid var(--border);
+      border-radius: 6px; overflow: hidden;
+      display: flex; flex-direction: column;
     }
-
     .panel-head {
-      background: var(--surf-2);
-      border-bottom: 1px solid var(--border);
+      background: var(--surf-2); border-bottom: 1px solid var(--border);
       padding: 9px 14px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
     }
+    .panel-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--text-3); }
+    .panel-badge { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; color: var(--gold); }
 
-    .panel-label {
-      font-size: 10px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--text-3);
-    }
-
-    .panel-badge {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--gold);
-    }
-
-    /* quick actions bar */
+    /* ─── Quick-bar with chip track ─── */
     .quick-bar {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 7px 14px;
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
+      display: flex; align-items: center;
+      padding: 6px 14px; border-bottom: 1px solid var(--border);
+      gap: 8px; min-height: 38px; flex-shrink: 0;
     }
+    .quick-btns { display: flex; gap: 6px; flex-shrink: 0; }
+    .chip-track {
+      display: flex; align-items: center; gap: 5px;
+      overflow-x: auto; flex: 1;
+      scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+      padding-bottom: 1px;
+    }
+    .chip-track::-webkit-scrollbar { height: 3px; }
+    .chip-track::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 2px; }
 
+    /* ─── Item chips ─── */
+    .item-chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 2px 5px 2px 8px;
+      background: var(--gold-tint); border: 1px solid var(--gold-ring);
+      border-radius: 3px; color: var(--gold);
+      font-size: 11px; white-space: nowrap; flex-shrink: 0;
+    }
+    .chip-x {
+      display: flex; align-items: center; justify-content: center;
+      background: none; border: none; cursor: pointer;
+      color: var(--text-3); font-size: 11px; padding: 0 2px; line-height: 1;
+      transition: color .1s; font-family: monospace;
+    }
+    .chip-x:hover { color: var(--red); }
+
+    /* ─── Shared small button ─── */
     .chip {
-      padding: 2px 9px;
-      font-size: 11px;
-      border-radius: 3px;
-      border: 1px solid var(--border-hi);
-      background: transparent;
-      color: var(--text-3);
-      cursor: pointer;
-      transition: color .12s, border-color .12s;
+      padding: 2px 9px; font-size: 11px; border-radius: 3px;
+      border: 1px solid var(--border-hi); background: transparent; color: var(--text-3);
+      cursor: pointer; transition: color .12s, border-color .12s;
       font-family: 'Inter', sans-serif;
     }
+    .chip:hover { color: var(--gold); border-color: var(--gold-dim); }
 
-    .chip:hover {
-      color: var(--gold);
-      border-color: var(--gold-dim);
-    }
-
-    /* search input */
-    .search-wrap {
-      padding: 8px 14px;
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-    }
-
+    /* ─── Search ─── */
+    .search-wrap { padding: 8px 14px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
     .search-input {
-      width: 100%;
-      background: var(--surf-2);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 6px 11px;
-      color: var(--text);
-      font-size: 12px;
-      font-family: 'Inter', sans-serif;
-      outline: none;
+      width: 100%; background: var(--surf-2); border: 1px solid var(--border);
+      border-radius: 4px; padding: 6px 11px; color: var(--text);
+      font-size: 12px; font-family: 'Inter', sans-serif; outline: none;
       transition: border-color .15s;
     }
-
     .search-input::placeholder { color: var(--text-3); }
     .search-input:focus { border-color: var(--gold-dim); }
 
-    /* ──────────── Items list ──────────── */
-    .items-body {
-      height: 340px;
-      overflow-y: auto;
-      padding: 4px 0;
-    }
-
+    /* ─── Items list ─── */
+    .items-body { height: 300px; overflow-y: auto; padding: 4px 0; }
     .section-divider {
       padding: 8px 14px 3px;
-      font-size: 9.5px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--gold-dim);
+      font-size: 9.5px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .12em; color: var(--gold-dim);
     }
-
     .item-row {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      padding: 4px 14px;
-      cursor: pointer;
-      transition: background .08s;
-      user-select: none;
+      display: flex; align-items: center; gap: 9px;
+      padding: 4px 14px; cursor: pointer; transition: background .08s; user-select: none;
     }
-
     .item-row:hover { background: var(--surf-2); }
     .item-row.selected { background: rgba(201,168,100,.06); }
+    .item-row input[type="checkbox"] { accent-color: var(--gold); width: 13px; height: 13px; cursor: pointer; flex-shrink: 0; }
+    .item-row label { font-size: 12.5px; cursor: pointer; color: var(--text); line-height: 1.4; }
 
-    .item-row input[type="checkbox"] {
-      accent-color: var(--gold);
-      width: 13px;
-      height: 13px;
-      cursor: pointer;
-      flex-shrink: 0;
+    /* ─── Dietary groups ─── */
+    .diet-section {
+      border-bottom: 1px solid var(--border); padding: 8px 14px; flex-shrink: 0;
     }
-
-    .item-row label {
-      font-size: 12.5px;
-      cursor: pointer;
-      color: var(--text);
-      line-height: 1.4;
+    .diet-heading {
+      font-size: 9.5px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .1em; color: var(--text-3); margin-bottom: 7px;
     }
-
-    /* ──────────── Allergens list ──────────── */
-    .allergens-body {
-      flex: 1;
-      overflow-y: auto;
-      padding: 6px 0;
+    .diet-grid { display: flex; flex-wrap: wrap; gap: 5px; }
+    .diet-btn {
+      padding: 3px 9px; font-size: 11px; border-radius: 3px;
+      border: 1px solid var(--border-hi); background: transparent; color: var(--text-3);
+      cursor: pointer; transition: color .12s, border-color .12s, background .12s;
+      font-family: 'Inter', sans-serif; font-weight: 500; letter-spacing: .02em;
     }
+    .diet-btn:hover { color: var(--text-2); border-color: var(--border-hi); }
+    .diet-btn.diet-partial { color: var(--gold-dim); border-color: var(--gold-dim); }
+    .diet-btn.diet-active  { color: var(--gold); border-color: var(--gold); background: var(--gold-tint); }
 
+    /* ─── Allergens list ─── */
+    .allergens-body { flex: 1; overflow-y: auto; padding: 6px 0; min-height: 160px; }
     .allergen-row {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      padding: 5px 14px;
-      cursor: pointer;
-      user-select: none;
-      transition: background .08s;
+      display: flex; align-items: center; gap: 9px;
+      padding: 5px 14px; cursor: pointer; user-select: none; transition: background .08s;
     }
-
     .allergen-row:hover { background: var(--surf-2); }
     .allergen-row.checked { background: rgba(201,168,100,.05); }
-
-    .allergen-row input[type="checkbox"] {
-      accent-color: var(--gold);
-      width: 13px;
-      height: 13px;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-
-    .allergen-row label {
-      font-size: 12.5px;
-      cursor: pointer;
-      color: var(--text-2);
-      transition: color .1s;
-    }
-
+    .allergen-row input[type="checkbox"] { accent-color: var(--gold); width: 13px; height: 13px; cursor: pointer; flex-shrink: 0; }
+    .allergen-row label { font-size: 12.5px; cursor: pointer; color: var(--text-2); transition: color .1s; }
     .allergen-row.checked label { color: var(--text); }
 
-    /* ──────────── Action bar ──────────── */
-    .action-bar {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-
+    /* ─── Action bar ─── */
+    .action-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
     .btn-generate {
-      padding: 9px 26px;
-      background: var(--gold);
-      color: #08090c;
-      border: none;
-      border-radius: 5px;
-      font-size: 12.5px;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      cursor: pointer;
-      font-family: 'Inter', sans-serif;
+      padding: 9px 26px; background: var(--gold); color: #08090c;
+      border: none; border-radius: 5px; font-size: 12.5px; font-weight: 700;
+      letter-spacing: .06em; cursor: pointer; font-family: 'Inter', sans-serif;
       transition: opacity .15s, transform .1s;
     }
-
     .btn-generate:hover { opacity: .85; }
     .btn-generate:active { transform: scale(.98); }
-
     .btn-reset {
-      padding: 9px 18px;
-      background: transparent;
-      color: var(--text-3);
-      border: 1px solid var(--border);
-      border-radius: 5px;
-      font-size: 12.5px;
-      cursor: pointer;
-      font-family: 'Inter', sans-serif;
-      transition: color .12s, border-color .12s;
+      padding: 9px 18px; background: transparent; color: var(--text-3);
+      border: 1px solid var(--border); border-radius: 5px; font-size: 12.5px;
+      cursor: pointer; font-family: 'Inter', sans-serif; transition: color .12s, border-color .12s;
     }
+    .btn-reset:hover { color: var(--text-2); border-color: var(--border-hi); }
+    .action-hint { font-size: 12px; color: var(--text-3); }
 
-    .btn-reset:hover {
-      color: var(--text-2);
-      border-color: var(--border-hi);
-    }
-
-    .action-hint {
-      font-size: 12px;
-      color: var(--text-3);
-    }
-
-    /* ──────────── Grid output ──────────── */
-    .grid-wrap {
-      background: var(--surf-1);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      overflow: hidden;
-    }
-
+    /* ─── Grid ─── */
+    .grid-wrap { background: var(--surf-1); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
     .grid-topbar {
-      background: var(--surf-2);
-      border-bottom: 1px solid var(--border);
+      background: var(--surf-2); border-bottom: 1px solid var(--border);
       padding: 9px 14px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
     }
-
-    .grid-title {
-      font-size: 10px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--text-3);
-    }
-
-    .grid-stats {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      color: var(--text-3);
-    }
-
+    .grid-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--text-3); }
+    .grid-stats { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-3); }
     .grid-scroll { overflow-x: auto; }
 
-    /* ──────────── Table ──────────── */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
+    table { width: 100%; border-collapse: collapse; }
     thead th {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      background: var(--surf-2);
-      padding: 9px 12px;
-      font-size: 10px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-3);
-      border-bottom: 1px solid var(--border);
-      white-space: nowrap;
+      position: sticky; top: 0; z-index: 10;
+      background: var(--surf-2); padding: 9px 12px;
+      font-size: 10px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .08em; color: var(--text-3);
+      border-bottom: 1px solid var(--border); white-space: nowrap;
     }
-
     thead th.th-allergen { text-align: center; }
+    thead th.th-result   { text-align: center; color: var(--gold-dim); }
     thead th.th-item     { text-align: left; min-width: 160px; }
     thead th.th-section  { text-align: left; min-width: 140px; }
-    thead th.th-notes    { text-align: left; min-width: 200px; }
+    thead th.th-notes    { text-align: left; min-width: 180px; }
 
-    tbody td {
-      padding: 8px 12px;
-      border-bottom: 1px solid var(--border);
-      vertical-align: middle;
-    }
-
+    tbody td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
     tbody tr:last-child td { border-bottom: none; }
-
     tbody tr:hover td { background: rgba(255,255,255,.018); }
 
-    .td-section {
-      font-size: 10.5px;
-      color: var(--text-3);
-      white-space: nowrap;
-    }
+    .td-section  { font-size: 10.5px; color: var(--text-3); white-space: nowrap; }
+    .td-item     { font-size: 12.5px; font-weight: 500; color: var(--text); white-space: nowrap; }
+    .td-cell     { text-align: center; }
+    .td-result   { text-align: center; }
+    .td-notes    { font-size: 11px; color: var(--text-2); font-style: italic; }
 
-    .td-item {
-      font-size: 12.5px;
-      font-weight: 500;
-      color: var(--text);
-      white-space: nowrap;
-    }
-
-    .td-cell { text-align: center; }
-
-    .td-notes {
-      font-size: 11px;
-      color: var(--text-2);
-      font-style: italic;
-    }
-
-    /* ──────────── Cell badges ──────────── */
+    /* ─── Cell badges ─── */
     .badge {
       display: inline-block;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10.5px;
-      font-weight: 600;
-      padding: 2px 7px;
-      border-radius: 3px;
-      white-space: nowrap;
-      letter-spacing: 0.03em;
+      font-size: 10.5px; font-weight: 600;
+      padding: 2px 7px; border-radius: 3px;
+      white-space: nowrap; letter-spacing: .03em;
     }
-
+    /* MOD and Via-Ingredient share amber */
     .b-safe       { background: var(--green-bg); color: var(--green); }
-    .b-contains   { background: var(--red-bg);   color: var(--red); }
+    .b-contains   { background: var(--red-bg);   color: var(--red);   }
     .b-mod        { background: var(--amber-bg);  color: var(--amber); }
+    .b-ingredient { background: var(--amber-bg);  color: var(--amber); }
     .b-cc         { background: var(--orange-bg); color: var(--orange); }
-    .b-ingredient { background: var(--blue-bg);   color: var(--blue); }
-
-    /* ──────────── Empty / loading states ──────────── */
-    .empty {
-      padding: 64px 32px;
-      text-align: center;
+    /* Result column */
+    .b-result-fail { background: var(--red-bg);   color: var(--red);   font-size: 11px; padding: 3px 9px; }
+    .b-result-clear{ background: var(--green-bg); color: var(--green); font-size: 11px; padding: 3px 9px; }
+    .b-result-warn {
+      background: var(--amber-bg); color: var(--amber);
+      font-size: 10px; padding: 3px 8px;
+      white-space: normal; line-height: 1.5; text-align: left; max-width: 280px;
     }
 
-    .empty-icon {
-      width: 44px;
-      height: 44px;
-      margin: 0 auto 14px;
-      opacity: .25;
-    }
+    /* ─── Empty state ─── */
+    .empty { padding: 64px 32px; text-align: center; }
+    .empty-icon { width: 44px; height: 44px; margin: 0 auto 14px; opacity: .25; }
+    .empty-title { font-size: 14px; font-weight: 500; color: var(--text-2); margin-bottom: 6px; }
+    .empty-sub { font-size: 12px; color: var(--text-3); }
 
-    .empty-title {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text-2);
-      margin-bottom: 6px;
-    }
-
-    .empty-sub {
-      font-size: 12px;
-      color: var(--text-3);
-    }
-
-    /* ──────────── Responsive ──────────── */
     @media (max-width: 780px) {
       .selectors { grid-template-columns: 1fr; }
       .legend { display: none; }
@@ -485,84 +283,72 @@
 </head>
 <body>
 
-<!-- ══════════════ HEADER ══════════════ -->
+<!-- ══ HEADER ══ -->
 <header>
   <div class="wordmark">
     <span class="wordmark-name">Miru</span>
     <span class="wordmark-sub">Allergen Matrix</span>
   </div>
   <div class="legend">
-    <div class="legend-item">
-      <div class="legend-pip" style="background:var(--red)"></div>
-      Contains — cannot remove
-    </div>
-    <div class="legend-item">
-      <div class="legend-pip" style="background:var(--amber)"></div>
-      MOD — modifiable
-    </div>
-    <div class="legend-item">
-      <div class="legend-pip" style="background:var(--orange)"></div>
-      CC — cross-contamination
-    </div>
-    <div class="legend-item">
-      <div class="legend-pip" style="background:var(--blue)"></div>
-      Via ingredient
-    </div>
-    <div class="legend-item">
-      <div class="legend-pip" style="background:var(--green)"></div>
-      Not present
-    </div>
+    <div class="legend-item"><div class="legend-pip" style="background:var(--red)"></div>Contains — cannot remove</div>
+    <div class="legend-item"><div class="legend-pip" style="background:var(--amber)"></div>MOD — modifiable</div>
+    <div class="legend-item"><div class="legend-pip" style="background:var(--orange)"></div>CC — cross-contamination</div>
+    <div class="legend-item"><div class="legend-pip" style="background:var(--amber)"></div>Via ingredient</div>
+    <div class="legend-item"><div class="legend-pip" style="background:var(--green)"></div>Not present</div>
   </div>
 </header>
 
-<!-- ══════════════ MAIN ══════════════ -->
+<!-- ══ MAIN ══ -->
 <div class="main">
 
-  <!-- Selector panels -->
   <div class="selectors">
 
-    <!-- Items panel -->
+    <!-- ── Items panel ── -->
     <div class="panel">
       <div class="panel-head">
         <span class="panel-label">Menu Items</span>
         <span class="panel-badge" id="item-count">0 selected</span>
       </div>
       <div class="search-wrap">
-        <input class="search-input" type="search" id="item-search"
-               placeholder="Search items…" autocomplete="off">
+        <input class="search-input" type="search" id="item-search" placeholder="Search items…" autocomplete="off">
       </div>
       <div class="quick-bar">
-        <button class="chip" id="btn-select-all-items">Select All</button>
-        <button class="chip" id="btn-clear-items">Clear</button>
+        <div class="quick-btns">
+          <button class="chip" id="btn-select-all-items">Select All</button>
+          <button class="chip" id="btn-clear-items">Clear</button>
+        </div>
+        <div class="chip-track" id="item-chips"></div>
       </div>
       <div class="items-body" id="items-list"></div>
     </div>
 
-    <!-- Allergens panel -->
+    <!-- ── Allergens panel ── -->
     <div class="panel">
       <div class="panel-head">
         <span class="panel-label">Allergens</span>
         <span class="panel-badge" id="allergen-count">0 selected</span>
       </div>
-      <div class="quick-bar">
-        <button class="chip" id="btn-select-all-allergens">Select All</button>
-        <button class="chip" id="btn-clear-allergens">Clear</button>
+      <div class="quick-bar" style="border-bottom:none;">
+        <div class="quick-btns">
+          <button class="chip" id="btn-select-all-allergens">Select All</button>
+          <button class="chip" id="btn-clear-allergens">Clear</button>
+        </div>
+      </div>
+      <div class="diet-section">
+        <div class="diet-heading">Dietary Groups</div>
+        <div class="diet-grid" id="diet-grid"></div>
       </div>
       <div class="allergens-body" id="allergens-list"></div>
     </div>
 
   </div><!-- /selectors -->
 
-  <!-- Action bar -->
   <div class="action-bar">
     <button class="btn-generate" id="btn-generate">Generate Grid</button>
     <button class="btn-reset" id="btn-reset">Reset</button>
-    <span class="action-hint" id="action-hint">
-      Select menu items and allergens, then click Generate Grid.
-    </span>
+    <span class="action-hint" id="action-hint">Select menu items and allergens, then click Generate Grid.</span>
   </div>
 
-  <!-- Grid output -->
   <div class="grid-wrap">
     <div class="grid-topbar">
       <span class="grid-title">Allergen Cross-Reference</span>
@@ -587,25 +373,68 @@
 
 </div><!-- /main -->
 
-<!-- ══════════════ SCRIPT ══════════════ -->
 <script>
-  /* ── Data from server ── */
+  /* ═══════════════════════════════════════════════════
+     Data from server
+  ═══════════════════════════════════════════════════ */
   const ALL_ALLERGENS = {{ allergens_json | safe }};
-  const SECTIONS      = {{ sections_json | safe }};   // { section: [itemName, …], … }
+  const SECTIONS      = {{ sections_json | safe }};
 
-  /* ── State ── */
-  const selectedItems    = new Set();
+  /* Dietary group presets (allergen names must match ALL_ALLERGENS exactly) */
+  const DIETARY_GROUPS = [
+    { label: 'All Dairy',   allergens: ['Butter', 'Milk/Cream'] },
+    { label: 'All Seafood', allergens: ['Shellfish', 'Fin Fish'] },
+    { label: 'All Allium',  allergens: ['Garlic/Allium', 'Onion/Allium'] },
+    { label: 'Pescetarian', allergens: ['Poultry', 'Beef', 'Pork'] },
+    { label: 'Vegetarian',  allergens: ['Shellfish', 'Fin Fish', 'Poultry', 'Beef', 'Pork'] },
+    { label: 'Vegan',       allergens: ['Egg', 'Butter', 'Milk/Cream', 'Shellfish', 'Fin Fish', 'Poultry', 'Beef', 'Pork'] },
+    { label: 'Gluten-Free', allergens: ['Wheat/Gluten'] },
+    { label: 'Sesame-Free', allergens: ['Sesame Oil', 'Sesame Seeds'] },
+  ];
+
+  /* ═══════════════════════════════════════════════════
+     State
+  ═══════════════════════════════════════════════════ */
+  const selectedItems     = new Set();
   const selectedAllergens = new Set();
 
-  /* ── Helpers ── */
   const $ = id => document.getElementById(id);
 
+  /* ═══════════════════════════════════════════════════
+     Counts
+  ═══════════════════════════════════════════════════ */
   function updateCounts() {
-    $('item-count').textContent    = `${selectedItems.size} selected`;
+    $('item-count').textContent     = `${selectedItems.size} selected`;
     $('allergen-count').textContent = `${selectedAllergens.size} selected`;
   }
 
-  /* ── Render items list ── */
+  /* ═══════════════════════════════════════════════════
+     Item chips (in quick-bar)
+  ═══════════════════════════════════════════════════ */
+  function renderChips() {
+    const track = $('item-chips');
+    track.innerHTML = '';
+    for (const name of selectedItems) {
+      const chip = document.createElement('span');
+      chip.className = 'item-chip';
+      chip.innerHTML =
+        `${name}<button class="chip-x" title="Remove" data-name="${name.replace(/"/g, '&quot;')}">✕</button>`;
+      chip.querySelector('.chip-x').addEventListener('click', e => {
+        const n = e.currentTarget.dataset.name;
+        selectedItems.delete(n);
+        renderChips();
+        // Uncheck in list
+        const cb = document.querySelector(`[data-name="${CSS.escape(n)}"] input`);
+        if (cb) { cb.checked = false; cb.closest('.item-row').classList.remove('selected'); }
+        updateCounts();
+      });
+      track.appendChild(chip);
+    }
+  }
+
+  /* ═══════════════════════════════════════════════════
+     Items list
+  ═══════════════════════════════════════════════════ */
   function renderItems(filter = '') {
     const el = $('items-list');
     el.innerHTML = '';
@@ -615,10 +444,10 @@
       const visible = names.filter(n => !fl || n.toLowerCase().includes(fl));
       if (!visible.length) continue;
 
-      const div = document.createElement('div');
-      div.className = 'section-divider';
-      div.textContent = section;
-      el.appendChild(div);
+      const hdr = document.createElement('div');
+      hdr.className = 'section-divider';
+      hdr.textContent = section;
+      el.appendChild(hdr);
 
       for (const name of visible) {
         const row = document.createElement('div');
@@ -637,78 +466,103 @@
         row.appendChild(cb);
         row.appendChild(lbl);
 
-        row.addEventListener('click', e => {
-          if (e.target === cb) return; // let checkbox handle itself
-          cb.checked = !cb.checked;
-          handleItemToggle(name, cb.checked, row);
-        });
-        cb.addEventListener('change', () => handleItemToggle(name, cb.checked, row));
-
+        row.addEventListener('click', e => { if (e.target === cb) return; cb.checked = !cb.checked; doItemToggle(name, cb.checked, row); });
+        cb.addEventListener('change', () => doItemToggle(name, cb.checked, row));
         el.appendChild(row);
       }
     }
     updateCounts();
   }
 
-  function handleItemToggle(name, checked, row) {
+  function doItemToggle(name, checked, row) {
     checked ? selectedItems.add(name) : selectedItems.delete(name);
     row.classList.toggle('selected', checked);
+    renderChips();
     updateCounts();
   }
 
-  /* ── Render allergens list ── */
+  /* ═══════════════════════════════════════════════════
+     Allergens list
+  ═══════════════════════════════════════════════════ */
   function renderAllergens() {
     const el = $('allergens-list');
     el.innerHTML = '';
-
     for (const allergen of ALL_ALLERGENS) {
       const checked = selectedAllergens.has(allergen);
       const row = document.createElement('div');
       row.className = 'allergen-row' + (checked ? ' checked' : '');
-      row.dataset.allergen = allergen;
 
       const cb = document.createElement('input');
-      cb.type = 'checkbox';
-      cb.checked = checked;
+      cb.type = 'checkbox'; cb.checked = checked;
       cb.id = 'a_' + allergen.replace(/\W/g, '_');
 
       const lbl = document.createElement('label');
-      lbl.htmlFor = cb.id;
-      lbl.textContent = allergen;
+      lbl.htmlFor = cb.id; lbl.textContent = allergen;
 
-      row.appendChild(cb);
-      row.appendChild(lbl);
+      row.appendChild(cb); row.appendChild(lbl);
 
-      row.addEventListener('click', e => {
-        if (e.target === cb) return;
-        cb.checked = !cb.checked;
-        handleAllergenToggle(allergen, cb.checked, row);
-      });
-      cb.addEventListener('change', () => handleAllergenToggle(allergen, cb.checked, row));
-
+      const toggle = (a, c, r) => {
+        c ? selectedAllergens.add(a) : selectedAllergens.delete(a);
+        r.classList.toggle('checked', c);
+        updateDietGroupStates();
+        updateCounts();
+      };
+      row.addEventListener('click', e => { if (e.target === cb) return; cb.checked = !cb.checked; toggle(allergen, cb.checked, row); });
+      cb.addEventListener('change', () => toggle(allergen, cb.checked, row));
       el.appendChild(row);
     }
+    updateDietGroupStates();
     updateCounts();
   }
 
-  function handleAllergenToggle(allergen, checked, row) {
-    checked ? selectedAllergens.add(allergen) : selectedAllergens.delete(allergen);
-    row.classList.toggle('checked', checked);
-    updateCounts();
+  /* ═══════════════════════════════════════════════════
+     Dietary group buttons
+  ═══════════════════════════════════════════════════ */
+  function renderDietaryGroups() {
+    const grid = $('diet-grid');
+    grid.innerHTML = '';
+    for (const grp of DIETARY_GROUPS) {
+      const btn = document.createElement('button');
+      btn.className = 'diet-btn';
+      btn.textContent = grp.label;
+      btn.dataset.allergens = JSON.stringify(grp.allergens);
+      btn.addEventListener('click', () => toggleDietGroup(grp.allergens));
+      grid.appendChild(btn);
+    }
   }
 
-  /* ── Quick-select buttons ── */
+  function toggleDietGroup(allergens) {
+    const allOn = allergens.every(a => selectedAllergens.has(a));
+    allergens.forEach(a => allOn ? selectedAllergens.delete(a) : selectedAllergens.add(a));
+    renderAllergens(); // re-render checkboxes to reflect new state
+  }
+
+  function updateDietGroupStates() {
+    document.querySelectorAll('.diet-btn').forEach(btn => {
+      const als = JSON.parse(btn.dataset.allergens);
+      const all  = als.every(a => selectedAllergens.has(a));
+      const some = als.some(a => selectedAllergens.has(a));
+      btn.classList.toggle('diet-active',  all);
+      btn.classList.toggle('diet-partial', some && !all);
+    });
+  }
+
+  /* ═══════════════════════════════════════════════════
+     Quick-select buttons
+  ═══════════════════════════════════════════════════ */
   $('btn-select-all-items').addEventListener('click', () => {
     const fl = $('item-search').value.toLowerCase();
     for (const [, names] of Object.entries(SECTIONS))
       for (const n of names)
         if (!fl || n.toLowerCase().includes(fl)) selectedItems.add(n);
     renderItems($('item-search').value);
+    renderChips();
   });
 
   $('btn-clear-items').addEventListener('click', () => {
     selectedItems.clear();
     renderItems($('item-search').value);
+    renderChips();
   });
 
   $('btn-select-all-allergens').addEventListener('click', () => {
@@ -723,47 +577,77 @@
 
   $('item-search').addEventListener('input', e => renderItems(e.target.value));
 
-  /* ── Reset ── */
+  /* ═══════════════════════════════════════════════════
+     Reset
+  ═══════════════════════════════════════════════════ */
   $('btn-reset').addEventListener('click', () => {
-    selectedItems.clear();
-    selectedAllergens.clear();
+    selectedItems.clear(); selectedAllergens.clear();
     $('item-search').value = '';
-    renderItems();
-    renderAllergens();
+    renderItems(); renderAllergens(); renderChips();
     $('grid-stats').textContent = '';
     $('action-hint').textContent = 'Select menu items and allergens, then click Generate Grid.';
-    $('grid-output').innerHTML = `
-      <div class="empty">
-        <svg class="empty-icon" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="2" y="2" width="40" height="40" rx="4" stroke="currentColor" stroke-width="2"/>
-          <line x1="2" y1="12" x2="42" y2="12" stroke="currentColor" stroke-width="1.5"/>
-          <line x1="14" y1="12" x2="14" y2="42" stroke="currentColor" stroke-width="1.5"/>
-          <rect x="18" y="16" width="8" height="8" rx="1.5" fill="currentColor" opacity=".3"/>
-          <rect x="29" y="16" width="8" height="8" rx="1.5" fill="currentColor" opacity=".3"/>
-          <rect x="18" y="28" width="8" height="8" rx="1.5" fill="currentColor" opacity=".3"/>
-          <rect x="29" y="28" width="8" height="8" rx="1.5" fill="currentColor" opacity=".3"/>
-        </svg>
-        <div class="empty-title">No grid generated yet</div>
-        <div class="empty-sub">Select items and allergens above, then click <strong>Generate Grid</strong></div>
-      </div>`;
+    $('grid-output').innerHTML = emptyState();
   });
 
-  /* ── Cell badge logic ── */
-  function badge(val) {
-    if (!val)            return `<span class="badge b-safe">—</span>`;
-    if (val === 'X')     return `<span class="badge b-contains">✕ X</span>`;
-    if (val === 'MOD')   return `<span class="badge b-mod">MOD</span>`;
-    if (val === 'CC')    return `<span class="badge b-cc">CC</span>`;
-    // Specific ingredient text (e.g. "7 Spice", "Mayo", "Rice")
-    return `<span class="badge b-ingredient" title="${val}">${val}</span>`;
+  function emptyState() {
+    return `<div class="empty">
+      <svg class="empty-icon" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="2" y="2" width="40" height="40" rx="4" stroke="currentColor" stroke-width="2"/>
+        <line x1="2" y1="12" x2="42" y2="12" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="14" y1="12" x2="14" y2="42" stroke="currentColor" stroke-width="1.5"/>
+        <rect x="18" y="16" width="8" height="8" rx="1.5" fill="currentColor" opacity=".3"/>
+        <rect x="29" y="16" width="8" height="8" rx="1.5" fill="currentColor" opacity=".3"/>
+        <rect x="18" y="28" width="8" height="8" rx="1.5" fill="currentColor" opacity=".3"/>
+        <rect x="29" y="28" width="8" height="8" rx="1.5" fill="currentColor" opacity=".3"/>
+      </svg>
+      <div class="empty-title">No grid generated yet</div>
+      <div class="empty-sub">Select items and allergens above, then click <strong>Generate Grid</strong></div>
+    </div>`;
   }
 
-  /* ── Generate grid ── */
+  /* ═══════════════════════════════════════════════════
+     Cell badge
+  ═══════════════════════════════════════════════════ */
+  function badge(val) {
+    if (!val)          return `<span class="badge b-safe">—</span>`;
+    if (val === 'X')   return `<span class="badge b-contains">✕ X</span>`;
+    if (val === 'MOD') return `<span class="badge b-mod">MOD</span>`;
+    if (val === 'CC')  return `<span class="badge b-cc">CC</span>`;
+    return `<span class="badge b-ingredient">${val}</span>`;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     Result column logic (only when 2+ allergens selected)
+  ═══════════════════════════════════════════════════ */
+  function computeResult(values, columns) {
+    // Priority: any X → fail
+    const xCols = columns.filter(c => values[c] === 'X');
+    if (xCols.length) {
+      return `<span class="badge b-result-fail">✕ Fail</span>`;
+    }
+
+    const nonEmpty = columns.filter(c => values[c] && values[c] !== '');
+    if (!nonEmpty.length) {
+      return `<span class="badge b-result-clear">✓ Clear</span>`;
+    }
+
+    // Build mention list
+    const parts = nonEmpty.map(c => {
+      const v = values[c];
+      if (v === 'MOD') return `MOD (${c})`;
+      if (v === 'CC')  return `CC (${c})`;
+      return `${v} (${c})`;       // via ingredient
+    });
+    return `<span class="badge b-result-warn">${parts.join('<br>')}</span>`;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     Generate grid
+  ═══════════════════════════════════════════════════ */
   $('btn-generate').addEventListener('click', async () => {
     const hint = $('action-hint');
-
     if (!selectedItems.size || !selectedAllergens.size) {
-      hint.textContent = selectedItems.size === 0
+      hint.textContent = !selectedItems.size
         ? 'Select at least one menu item.'
         : 'Select at least one allergen.';
       return;
@@ -773,20 +657,19 @@
     const res = await fetch('/api/grid', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        items: [...selectedItems],
-        allergens: [...selectedAllergens],
-      }),
+      body: JSON.stringify({ items: [...selectedItems], allergens: [...selectedAllergens] }),
     });
-
     const data = await res.json();
     renderGrid(data.rows, data.columns);
   });
 
-  /* ── Render grid ── */
+  /* ═══════════════════════════════════════════════════
+     Render grid
+  ═══════════════════════════════════════════════════ */
   function renderGrid(rows, columns) {
     const out  = $('grid-output');
     const stat = $('grid-stats');
+    const showResult = columns.length > 1;
 
     if (!rows.length) {
       stat.textContent = '';
@@ -794,13 +677,13 @@
       return;
     }
 
-    stat.textContent = `${rows.length} item${rows.length > 1 ? 's' : ''} × ${columns.length} allergen${columns.length > 1 ? 's' : ''}`;
+    stat.textContent = `${rows.length} item${rows.length !== 1 ? 's' : ''} × ${columns.length} allergen${columns.length !== 1 ? 's' : ''}`;
 
     let html = '<table><thead><tr>';
     html += '<th class="th-section">Section</th>';
     html += '<th class="th-item">Menu Item</th>';
-    for (const col of columns)
-      html += `<th class="th-allergen">${col}</th>`;
+    for (const col of columns) html += `<th class="th-allergen">${col}</th>`;
+    if (showResult) html += '<th class="th-result">Result</th>';
     html += '<th class="th-notes">Notes</th>';
     html += '</tr></thead><tbody>';
 
@@ -808,8 +691,8 @@
       html += '<tr>';
       html += `<td class="td-section">${row.section}</td>`;
       html += `<td class="td-item">${row.name}</td>`;
-      for (const col of columns)
-        html += `<td class="td-cell">${badge(row.values[col] || '')}</td>`;
+      for (const col of columns) html += `<td class="td-cell">${badge(row.values[col] || '')}</td>`;
+      if (showResult) html += `<td class="td-result">${computeResult(row.values, columns)}</td>`;
       html += `<td class="td-notes">${row.notes || ''}</td>`;
       html += '</tr>';
     }
@@ -818,9 +701,13 @@
     out.innerHTML = html;
   }
 
-  /* ── Init ── */
+  /* ═══════════════════════════════════════════════════
+     Init
+  ═══════════════════════════════════════════════════ */
   renderItems();
   renderAllergens();
+  renderDietaryGroups();
+  renderChips();
 </script>
 </body>
 </html>
