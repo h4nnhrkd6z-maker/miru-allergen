@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Miru · Allergen Matrix</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ──────────── Design tokens ──────────── */
+    :root {
+      --bg:         #08090c;
+      --surf-1:     #0f1118;
+      --surf-2:     #161b26;
+      --surf-3:     #1e2433;
+      --border:     #252c3d;
+      --border-hi:  #374058;
+
+      --text:       #eae6dc;
+      --text-2:     #9ba3b8;
+      --text-3:     #5a6278;
+
+      --gold:       #c9a864;
+      --gold-dim:   #7a6435;
+
+      /* allergen cell states */
+      --red-bg:     #2a1418;
+      --red:        #f07070;
+      --amber-bg:   #261f10;
+      --amber:      #e8ab4a;
+      --orange-bg:  #221608;
+      --orange:     #e08040;
+      --blue-bg:    #0e1a2e;
+      --blue:       #6ea9e8;
+      --green-bg:   #0a1a14;
+      --green:      #4caf82;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      font-size: 13px;
+    }
+
+    /* ──────────── Scrollbar ──────────── */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 3px; }
+
+    /* ──────────── Header ──────────── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--surf-1);
+      border-bottom: 1px solid var(--border);
+      padding: 0 28px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .wordmark {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .wordmark-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .wordmark-sub {
+      font-size: 11px;
+      color: var(--text-3);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    /* legend */
+    .legend {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--text-2);
+      white-space: nowrap;
+    }
+
+    .legend-pip {
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    /* ──────────── Main layout ──────────── */
+    .main {
+      padding: 20px 28px 40px;
+      max-width: 1800px;
+      margin: 0 auto;
+    }
+
+    /* ──────────── Selector row ──────────── */
+    .selectors {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    /* ──────────── Panel shell ──────────── */
+    .panel {
+      background: var(--surf-1);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-head {
+      background: var(--surf-2);
+      border-bottom: 1px solid var(--border);
+      padding: 9px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .panel-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-3);
+    }
+
+    .panel-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--gold);
+    }
+
+    /* quick actions bar */
+    .quick-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 14px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .chip {
+      padding: 2px 9px;
+      font-size: 11px;
+      border-radius: 3px;
+      border: 1px solid var(--border-hi);
+      background: transparent;
+      color: var(--text-3);
+      cursor: pointer;
+      transition: color .12s, border-color .12s;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .chip:hover {
+      color: var(--gold);
+      border-color: var(--gold-dim);
+    }
+
+    /* search input */
+    .search-wrap {
+      padding: 8px 14px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--surf-2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 6px 11px;
+      color: var(--text);
+      font-size: 12px;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: border-color .15s;
+    }
+
+    .search-input::placeholder { color: var(--text-3); }
+    .search-input:focus { border-color: var(--gold-dim); }
+
+    /* ──────────── Items list ──────────── */
+    .items-body {
+      height: 340px;
+      overflow-y: auto;
+      padding: 4px 0;
+    }
+
+    .section-divider {
+      padding: 8px 14px 3px;
+      font-size: 9.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--gold-dim);
+    }
+
+    .item-row {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 4px 14px;
+      cursor: pointer;
+      transition: background .08s;
+      user-select: none;
+    }
+
+    .item-row:hover { background: var(--surf-2); }
+    .item-row.selected { background: rgba(201,168,100,.06); }
+
+    .item-row input[type="checkbox"] {
+      accent-color: var(--gold);
+      width: 13px;
+      height: 13px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .item-row label {
+      font-size: 12.5px;
+      cursor: pointer;
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    /* ──────────── Allergens list ──────────── */
+    .allergens-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 6px 0;
+    }
+
+    .allergen-row {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 5px 14px;
+      cursor: pointer;
+      user-select: none;
+      transition: background .08s;
+    }
+
+    .allergen-row:hover { background: var(--surf-2); }
+    .allergen-row.checked { background: rgba(201,168,100,.05); }
+
+    .allergen-row input[type="checkbox"] {
+      accent-color: var(--gold);
+      width: 13px;
+      height: 13px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .allergen-row label {
+      font-size: 12.5px;
+      cursor: pointer;
+      color: var(--text-2);
+      transition: color .1s;
+    }
+
+    .allergen-row.checked label { color: var(--text); }
+
+    /* ──────────── Action bar ──────────── */
+    .action-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .btn-generate {
+      padding: 9px 26px;
+      background: var(--gold);
+      color: #08090c;
+      border: none;
+      border-radius: 5px;
+      font-size: 12.5px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: opacity .15s, transform .1s;
+    }
+
+    .btn-generate:hover { opacity: .85; }
+    .btn-generate:active { transform: scale(.98); }
+
+    .btn-reset {
+      padding: 9px 18px;
+      background: transparent;
+      color: var(--text-3);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      font-size: 12.5px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: color .12s, border-color .12s;
+    }
+
+    .btn-reset:hover {
+      color: var(--text-2);
+      border-color: var(--border-hi);
+    }
+
+    .action-hint {
+      font-size: 12px;
+      color: var(--text-3);
+    }
+
+    /* ──────────── Grid output ──────────── */
+    .grid-wrap {
+      background: var(--surf-1);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .grid-topbar {
+      background: var(--surf-2);
+      border-bottom: 1px solid var(--border);
+      padding: 9px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .grid-title {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-3);
+    }
+
+    .grid-stats {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-3);
+    }
+
+    .grid-scroll { overflow-x: auto; }
+
+    /* ──────────── Table ──────────── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--surf-2);
+      padding: 9px 12px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-3);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    thead th.th-allergen { text-align: center; }
+    thead th.th-item     { text-align: left; min-width: 160px; }
+    thead th.th-section  { text-align: left; min-width: 140px; }
+    thead th.th-notes    { text-align: left; min-width: 200px; }
+
+    tbody td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    tbody tr:last-child td { border-bottom: none; }
+
+    tbody tr:hover td { background: rgba(255,255,255,.018); }
+
+    .td-section {
+      font-size: 10.5px;
+      color: var(--text-3);
+      white-space: nowrap;
+    }
+
+    .td-item {
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .td-cell { text-align: center; }
+
+    .td-notes {
+      font-size: 11px;
+      color: var(--text-2);
+      font-style: italic;
+    }
+
+    /* ──────────── Cell badges ──────────── */
+    .badge {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 3px;
+      white-space: nowrap;
+      letter-spacing: 0.03em;
+    }
+
+    .b-safe       { background: var(--green-bg); color: var(--green); }
+    .b-contains   { background: var(--red-bg);   color: var(--red); }
+    .b-mod        { background: var(--amber-bg);  color: var(--amber); }
+    .b-cc         { background: var(--orange-bg); color: var(--orange); }
+    .b-ingredient { background: var(--blue-bg);   color: var(--blue); }
+
+    /* ──────────── Empty / loading states ──────────── */
+    .empty {
+      padding: 64px 32px;
+      text-align: center;
+    }
+
+    .empty-icon {
+      width: 44px;
+      height: 44px;
+      margin: 0 auto 14px;
+      opacity: .25;
+    }
+
+    .empty-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-2);
+      margin-bottom: 6px;
+    }
+
+    .empty-sub {
+      font-size: 12px;
+      color: var(--text-3);
+    }
+
+    /* ──────────── Responsive ──────────── */
+    @media (max-width: 780px) {
+      .selectors { grid-template-columns: 1fr; }
+      .legend { display: none; }
+      header { padding: 0 16px; }
+      .main { padding: 14px 16px 32px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════ HEADER ══════════════ -->
+<header>
+  <div class="wordmark">
+    <span class="wordmark-name">Miru</span>
+    <span class="wordmark-sub">Allergen Matrix</span>
+  </div>
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-pip" style="background:var(--red)"></div>
+      Contains — cannot remove
+    </div>
+    <div class="legend-item">
+      <div class="legend-pip" style="background:var(--amber)"></div>
+      MOD — modifiable
+    </div>
+    <div class="legend-item">
+      <div class="legend-pip" style="background:var(--orange)"></div>
+      CC — cross-contamination
+    </div>
+    <div class="legend-item">
+      <div class="legend-pip" style="background:var(--blue)"></div>
+      Via ingredient
+    </div>
+    <div class="legend-item">
+      <div class="legend-pip" style="background:var(--green)"></div>
+      Not present
+    </div>
+  </div>
+</header>
+
+<!-- ══════════════ MAIN ══════════════ -->
+<div class="main">
+
+  <!-- Selector panels -->
+  <div class="selectors">
+
+    <!-- Items panel -->
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-label">Menu Items</span>
+        <span class="panel-badge" id="item-count">0 selected</span>
+      </div>
+      <div class="search-wrap">
+        <input class="search-input" type="search" id="item-search"
+               placeholder="Search items…" autocomplete="off">
+      </div>
+      <div class="quick-bar">
+        <button class="chip" id="btn-select-all-items">Select All</button>
+        <button class="chip" id="btn-clear-items">Clear</button>
+      </div>
+      <div class="items-body" id="items-list"></div>
+    </div>
+
+    <!-- Allergens panel -->
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-label">Allergens</span>
+        <span class="panel-badge" id="allergen-count">0 selected</span>
+      </div>
+      <div class="quick-bar">
+        <button class="chip" id="btn-select-all-allergens">Select All</button>
+        <button class="chip" id="btn-clear-allergens">Clear</button>
+      </div>
+      <div class="allergens-body" id="allergens-list"></div>
+    </div>
+
+  </div><!-- /selectors -->
+
+  <!-- Action bar -->
+  <div class="action-bar">
+    <button class="btn-generate" id="btn-generate">Generate Grid</button>
+    <button class="btn-reset" id="btn-reset">Reset</button>
+    <span class="action-hint" id="action-hint">
+      Select menu items and allergens, then click Generate Grid.
+    </span>
+  </div>
+
+  <!-- Grid output -->
+  <div class="grid-wrap">
+    <div class="grid-topbar">
+      <span class="grid-title">Allergen Cross-Reference</span>
+      <span class="grid-stats" id="grid-stats"></span>
+    </div>
+    <div class="grid-scroll" id="grid-output">
+      <div class="empty">
+        <svg class="empty-icon" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="2" width="40" height="40" rx="4" stroke="currentColor" stroke-width="2"/>
+          <line x1="2" y1="12" x2="42" y2="12" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="14" y1="12" x2="14" y2="42" stroke="currentColor" stroke-width="1.5"/>
+          <rect x="18" y="16" width="8" height="8" rx="1.5" fill="currentColor" opacity=".3"/>
+          <rect x="29" y="16" width="8" height="8" rx="1.5" fill="currentColor" opacity=".3"/>
+          <rect x="18" y="28" width="8" height="8" rx="1.5" fill="currentColor" opacity=".3"/>
+          <rect x="29" y="28" width="8" height="8" rx="1.5" fill="currentColor" opacity=".3"/>
+        </svg>
+        <div class="empty-title">No grid generated yet</div>
+        <div class="empty-sub">Select items and allergens above, then click <strong>Generate Grid</strong></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- ══════════════ SCRIPT ══════════════ -->
+<script>
+  /* ── Data from server ── */
+  const ALL_ALLERGENS = {{ allergens_json | safe }};
+  const SECTIONS      = {{ sections_json | safe }};   // { section: [itemName, …], … }
+
+  /* ── State ── */
+  const selectedItems    = new Set();
+  const selectedAllergens = new Set();
+
+  /* ── Helpers ── */
+  const $ = id => document.getElementById(id);
+
+  function updateCounts() {
+    $('item-count').textContent    = `${selectedItems.size} selected`;
+    $('allergen-count').textContent = `${selectedAllergens.size} selected`;
+  }
+
+  /* ── Render items list ── */
+  function renderItems(filter = '') {
+    const el = $('items-list');
+    el.innerHTML = '';
+    const fl = filter.toLowerCase();
+
+    for (const [section, names] of Object.entries(SECTIONS)) {
+      const visible = names.filter(n => !fl || n.toLowerCase().includes(fl));
+      if (!visible.length) continue;
+
+      const div = document.createElement('div');
+      div.className = 'section-divider';
+      div.textContent = section;
+      el.appendChild(div);
+
+      for (const name of visible) {
+        const row = document.createElement('div');
+        row.className = 'item-row' + (selectedItems.has(name) ? ' selected' : '');
+        row.dataset.name = name;
+
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.checked = selectedItems.has(name);
+        cb.id = 'i_' + name.replace(/\W/g, '_');
+
+        const lbl = document.createElement('label');
+        lbl.htmlFor = cb.id;
+        lbl.textContent = name;
+
+        row.appendChild(cb);
+        row.appendChild(lbl);
+
+        row.addEventListener('click', e => {
+          if (e.target === cb) return; // let checkbox handle itself
+          cb.checked = !cb.checked;
+          handleItemToggle(name, cb.checked, row);
+        });
+        cb.addEventListener('change', () => handleItemToggle(name, cb.checked, row));
+
+        el.appendChild(row);
+      }
+    }
+    updateCounts();
+  }
+
+  function handleItemToggle(name, checked, row) {
+    checked ? selectedItems.add(name) : selectedItems.delete(name);
+    row.classList.toggle('selected', checked);
+    updateCounts();
+  }
+
+  /* ── Render allergens list ── */
+  function renderAllergens() {
+    const el = $('allergens-list');
+    el.innerHTML = '';
+
+    for (const allergen of ALL_ALLERGENS) {
+      const checked = selectedAllergens.has(allergen);
+      const row = document.createElement('div');
+      row.className = 'allergen-row' + (checked ? ' checked' : '');
+      row.dataset.allergen = allergen;
+
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = checked;
+      cb.id = 'a_' + allergen.replace(/\W/g, '_');
+
+      const lbl = document.createElement('label');
+      lbl.htmlFor = cb.id;
+      lbl.textContent = allergen;
+
+      row.appendChild(cb);
+      row.appendChild(lbl);
+
+      row.addEventListener('click', e => {
+        if (e.target === cb) return;
+        cb.checked = !cb.checked;
+        handleAllergenToggle(allergen, cb.checked, row);
+      });
+      cb.addEventListener('change', () => handleAllergenToggle(allergen, cb.checked, row));
+
+      el.appendChild(row);
+    }
+    updateCounts();
+  }
+
+  function handleAllergenToggle(allergen, checked, row) {
+    checked ? selectedAllergens.add(allergen) : selectedAllergens.delete(allergen);
+    row.classList.toggle('checked', checked);
+    updateCounts();
+  }
+
+  /* ── Quick-select buttons ── */
+  $('btn-select-all-items').addEventListener('click', () => {
+    const fl = $('item-search').value.toLowerCase();
+    for (const [, names] of Object.entries(SECTIONS))
+      for (const n of names)
+        if (!fl || n.toLowerCase().includes(fl)) selectedItems.add(n);
+    renderItems($('item-search').value);
+  });
+
+  $('btn-clear-items').addEventListener('click', () => {
+    selectedItems.clear();
+    renderItems($('item-search').value);
+  });
+
+  $('btn-select-all-allergens').addEventListener('click', () => {
+    for (const a of ALL_ALLERGENS) selectedAllergens.add(a);
+    renderAllergens();
+  });
+
+  $('btn-clear-allergens').addEventListener('click', () => {
+    selectedAllergens.clear();
+    renderAllergens();
+  });
+
+  $('item-search').addEventListener('input', e => renderItems(e.target.value));
+
+  /* ── Reset ── */
+  $('btn-reset').addEventListener('click', () => {
+    selectedItems.clear();
+    selectedAllergens.clear();
+    $('item-search').value = '';
+    renderItems();
+    renderAllergens();
+    $('grid-stats').textContent = '';
+    $('action-hint').textContent = 'Select menu items and allergens, then click Generate Grid.';
+    $('grid-output').innerHTML = `
+      <div class="empty">
+        <svg class="empty-icon" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="2" width="40" height="40" rx="4" stroke="currentColor" stroke-width="2"/>
+          <line x1="2" y1="12" x2="42" y2="12" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="14" y1="12" x2="14" y2="42" stroke="currentColor" stroke-width="1.5"/>
+          <rect x="18" y="16" width="8" height="8" rx="1.5" fill="currentColor" opacity=".3"/>
+          <rect x="29" y="16" width="8" height="8" rx="1.5" fill="currentColor" opacity=".3"/>
+          <rect x="18" y="28" width="8" height="8" rx="1.5" fill="currentColor" opacity=".3"/>
+          <rect x="29" y="28" width="8" height="8" rx="1.5" fill="currentColor" opacity=".3"/>
+        </svg>
+        <div class="empty-title">No grid generated yet</div>
+        <div class="empty-sub">Select items and allergens above, then click <strong>Generate Grid</strong></div>
+      </div>`;
+  });
+
+  /* ── Cell badge logic ── */
+  function badge(val) {
+    if (!val)            return `<span class="badge b-safe">—</span>`;
+    if (val === 'X')     return `<span class="badge b-contains">✕ X</span>`;
+    if (val === 'MOD')   return `<span class="badge b-mod">MOD</span>`;
+    if (val === 'CC')    return `<span class="badge b-cc">CC</span>`;
+    // Specific ingredient text (e.g. "7 Spice", "Mayo", "Rice")
+    return `<span class="badge b-ingredient" title="${val}">${val}</span>`;
+  }
+
+  /* ── Generate grid ── */
+  $('btn-generate').addEventListener('click', async () => {
+    const hint = $('action-hint');
+
+    if (!selectedItems.size || !selectedAllergens.size) {
+      hint.textContent = selectedItems.size === 0
+        ? 'Select at least one menu item.'
+        : 'Select at least one allergen.';
+      return;
+    }
+    hint.textContent = '';
+
+    const res = await fetch('/api/grid', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        items: [...selectedItems],
+        allergens: [...selectedAllergens],
+      }),
+    });
+
+    const data = await res.json();
+    renderGrid(data.rows, data.columns);
+  });
+
+  /* ── Render grid ── */
+  function renderGrid(rows, columns) {
+    const out  = $('grid-output');
+    const stat = $('grid-stats');
+
+    if (!rows.length) {
+      stat.textContent = '';
+      out.innerHTML = `<div class="empty"><div class="empty-title">No matching items found.</div></div>`;
+      return;
+    }
+
+    stat.textContent = `${rows.length} item${rows.length > 1 ? 's' : ''} × ${columns.length} allergen${columns.length > 1 ? 's' : ''}`;
+
+    let html = '<table><thead><tr>';
+    html += '<th class="th-section">Section</th>';
+    html += '<th class="th-item">Menu Item</th>';
+    for (const col of columns)
+      html += `<th class="th-allergen">${col}</th>`;
+    html += '<th class="th-notes">Notes</th>';
+    html += '</tr></thead><tbody>';
+
+    for (const row of rows) {
+      html += '<tr>';
+      html += `<td class="td-section">${row.section}</td>`;
+      html += `<td class="td-item">${row.name}</td>`;
+      for (const col of columns)
+        html += `<td class="td-cell">${badge(row.values[col] || '')}</td>`;
+      html += `<td class="td-notes">${row.notes || ''}</td>`;
+      html += '</tr>';
+    }
+
+    html += '</tbody></table>';
+    out.innerHTML = html;
+  }
+
+  /* ── Init ── */
+  renderItems();
+  renderAllergens();
+</script>
+</body>
+</html>
