@@ -108,6 +108,48 @@ def get_grid():
     return jsonify({"rows": rows, "columns": selected_allergens})
 
 
+@app.route("/menu")
+def menu():
+    return render_template(
+        "menu.html",
+        allergens_json=json.dumps(ALLERGEN_COLS),
+    )
+
+
+@app.route("/api/menu", methods=["POST"])
+def get_menu():
+    data = request.get_json(force=True)
+    selected_allergens: list[str] = data.get("allergens", [])
+
+    clear_items, mod_items, fail_items = [], [], []
+
+    for item in MENU_ITEMS:
+        vals = {a: item["allergens"].get(a, "") for a in selected_allergens}
+        non_empty = {a: v for a, v in vals.items() if v}
+
+        entry = {
+            "section": item["section"],
+            "name": item["name"],
+            "notes": item["notes"],
+            "flags": non_empty,
+        }
+
+        if any(v == "X" for v in non_empty.values()):
+            fail_items.append(entry)
+        elif non_empty:
+            mod_items.append(entry)
+        else:
+            clear_items.append(entry)
+
+    return jsonify({
+        "clear": clear_items,
+        "mod":   mod_items,
+        "fail":  fail_items,
+        "allergens": selected_allergens,
+        "total": len(MENU_ITEMS),
+    })
+
+
 @app.route("/api/data")
 def get_data():
     """Return full dataset as JSON (for debugging or future use)."""

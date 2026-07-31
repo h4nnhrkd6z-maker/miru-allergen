@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Miru · Menu Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ─── Tokens ─── */
+    :root {
+      --bg:        #08090c;
+      --surf-1:    #0f1118;
+      --surf-2:    #161b26;
+      --border:    #252c3d;
+      --border-hi: #374058;
+      --text:      #eae6dc;
+      --text-2:    #9ba3b8;
+      --text-3:    #5a6278;
+      --gold:      #c9a864;
+      --gold-dim:  #7a6435;
+      --gold-tint: rgba(201,168,100,.10);
+      --gold-ring: rgba(201,168,100,.22);
+      --red-bg:    #2a1418; --red:    #f07070;
+      --amber-bg:  #261f10; --amber:  #e8ab4a;
+      --orange-bg: #221608; --orange: #e08040;
+      --green-bg:  #0a1a14; --green:  #4caf82;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg); color: var(--text);
+      min-height: 100vh; font-size: 13px;
+    }
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 3px; }
+
+    /* ─── Header ─── */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--surf-1); border-bottom: 1px solid var(--border);
+      padding: 0 24px; height: 52px;
+      display: flex; align-items: center; gap: 0;
+    }
+    .wordmark { display: flex; align-items: baseline; gap: 10px; flex-shrink: 0; }
+    .wordmark-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px; font-weight: 600; letter-spacing: .18em;
+      text-transform: uppercase; color: var(--gold);
+    }
+    .wordmark-sub { font-size: 11px; color: var(--text-3); letter-spacing: .06em; text-transform: uppercase; }
+    .page-nav { display: flex; align-self: stretch; margin-left: 8px; }
+    .nav-tab {
+      display: flex; align-items: center; padding: 0 16px;
+      font-size: 12px; font-weight: 500; color: var(--text-3);
+      text-decoration: none; border-bottom: 2px solid transparent;
+      transition: color .15s, border-color .15s; white-space: nowrap;
+    }
+    .nav-tab:hover { color: var(--text-2); }
+    .nav-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+    /* ─── Main layout ─── */
+    .main { padding: 20px 24px 40px; max-width: 1800px; margin: 0 auto; }
+
+    /* ─── Picker panel ─── */
+    .picker-panel {
+      background: var(--surf-1); border: 1px solid var(--border);
+      border-radius: 8px; overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .picker-head {
+      background: var(--surf-2); border-bottom: 1px solid var(--border);
+      padding: 10px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .picker-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--text-3); }
+    .picker-badge { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--gold); }
+
+    /* Dietary groups */
+    .diet-section { padding: 10px 16px; border-bottom: 1px solid var(--border); }
+    .diet-heading { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--text-3); margin-bottom: 8px; }
+    .diet-grid { display: flex; flex-wrap: wrap; gap: 5px; }
+    .diet-btn {
+      padding: 4px 10px; font-size: 11.5px; border-radius: 4px;
+      border: 1px solid var(--border-hi); background: transparent; color: var(--text-3);
+      cursor: pointer; transition: color .12s, border-color .12s, background .12s;
+      font-family: 'Inter', sans-serif; font-weight: 500;
+    }
+    .diet-btn:hover { color: var(--text-2); }
+    .diet-btn.diet-partial { color: var(--gold-dim); border-color: var(--gold-dim); }
+    .diet-btn.diet-active  { color: var(--gold); border-color: var(--gold); background: var(--gold-tint); }
+
+    /* Allergen search */
+    .search-wrap { padding: 9px 16px; border-bottom: 1px solid var(--border); }
+    .search-input {
+      width: 100%; background: var(--surf-2);
+      border: 1px solid var(--border); border-radius: 6px;
+      padding: 7px 12px; color: var(--text);
+      font-size: 12.5px; font-family: 'Inter', sans-serif; outline: none;
+      transition: border-color .15s;
+    }
+    .search-input::placeholder { color: var(--text-3); }
+    .search-input:focus { border-color: var(--gold-dim); }
+
+    /* Allergen pills */
+    .allergen-pills {
+      padding: 10px 16px 12px;
+      display: flex; flex-wrap: wrap; gap: 7px;
+    }
+    .allergen-btn {
+      display: inline-flex; align-items: center;
+      padding: 7px 14px; border-radius: 20px;
+      font-size: 12.5px; font-weight: 500;
+      cursor: pointer; font-family: 'Inter', sans-serif;
+      border: 1.5px solid var(--border-hi);
+      background: transparent; color: var(--text-3);
+      transition: all .13s; user-select: none;
+      min-height: 36px; white-space: nowrap;
+    }
+    .allergen-btn:hover { color: var(--text-2); border-color: var(--text-3); }
+    .allergen-btn.selected { background: var(--gold-tint); border-color: var(--gold); color: var(--gold); font-weight: 600; }
+    .allergen-btn.hidden { display: none; }
+
+    /* ─── Action bar ─── */
+    .action-bar {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 20px;
+    }
+    .btn-generate {
+      padding: 10px 28px; background: var(--gold); color: #08090c;
+      border: none; border-radius: 6px;
+      font-size: 13px; font-weight: 700; letter-spacing: .05em;
+      cursor: pointer; font-family: 'Inter', sans-serif;
+      transition: opacity .15s, transform .1s;
+    }
+    .btn-generate:hover { opacity: .85; }
+    .btn-generate:active { transform: scale(.98); }
+    .btn-reset {
+      padding: 10px 18px; background: transparent; color: var(--text-3);
+      border: 1px solid var(--border); border-radius: 6px;
+      font-size: 13px; cursor: pointer; font-family: 'Inter', sans-serif;
+      transition: color .12s, border-color .12s;
+    }
+    .btn-reset:hover { color: var(--text-2); border-color: var(--border-hi); }
+    .action-hint { font-size: 12px; color: var(--text-3); }
+
+    /* ─── Three-column output ─── */
+    .menu-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .menu-col {
+      background: var(--surf-1); border: 1px solid var(--border);
+      border-radius: 8px; overflow: hidden;
+    }
+
+    /* Column head */
+    .col-head {
+      padding: 14px 16px;
+      display: flex; align-items: center; gap: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .col-head.col-clear { background: var(--green-bg); border-bottom-color: rgba(76,175,130,.2); }
+    .col-head.col-mod   { background: var(--amber-bg); border-bottom-color: rgba(232,171,74,.2); }
+    .col-head.col-fail  { background: var(--red-bg);   border-bottom-color: rgba(240,112,112,.2); }
+
+    .col-icon { font-size: 20px; flex-shrink: 0; }
+    .col-clear .col-icon { color: var(--green); }
+    .col-mod   .col-icon { color: var(--amber); }
+    .col-fail  .col-icon { color: var(--red);   }
+
+    .col-meta { flex: 1; min-width: 0; }
+    .col-name {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .1em; margin-bottom: 2px;
+    }
+    .col-clear .col-name { color: var(--green); }
+    .col-mod   .col-name { color: var(--amber); }
+    .col-fail  .col-name { color: var(--red);   }
+
+    .col-desc { font-size: 11px; color: var(--text-3); }
+
+    .col-count {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 22px; font-weight: 700; flex-shrink: 0;
+    }
+    .col-clear .col-count { color: var(--green); }
+    .col-mod   .col-count { color: var(--amber); }
+    .col-fail  .col-count { color: var(--red);   }
+
+    /* Column body */
+    .col-body { padding: 8px 0 4px; }
+
+    /* Section group within a column */
+    .section-group { padding: 0 0 10px; }
+    .section-label {
+      display: flex; align-items: center; gap: 6px;
+      padding: 7px 16px 5px;
+      font-size: 9.5px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .1em; color: var(--text-3);
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 4px;
+    }
+    .sec-pip { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+    /* Individual menu item row */
+    .menu-item {
+      padding: 6px 16px 5px;
+      border-bottom: 1px solid rgba(37,44,61,.5);
+    }
+    .menu-item:last-child { border-bottom: none; }
+
+    .item-name {
+      font-size: 13px; font-weight: 500; color: var(--text);
+      line-height: 1.35;
+    }
+
+    /* Flag badges under item name (Mod/CC and Fail columns) */
+    .item-flags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+    .flag-badge {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; font-weight: 600;
+      padding: 1px 6px; border-radius: 3px;
+      white-space: nowrap;
+    }
+    .flag-x   { background: var(--red-bg);    color: var(--red);    }
+    .flag-mod { background: var(--amber-bg);   color: var(--amber);  }
+    .flag-cc  { background: var(--orange-bg);  color: var(--orange); }
+    .flag-ing { background: var(--amber-bg);   color: var(--amber);  }
+
+    /* Item notes (small, below flags) */
+    .item-note { font-size: 10.5px; color: var(--text-3); font-style: italic; margin-top: 3px; }
+
+    /* Empty state for a column */
+    .col-empty {
+      padding: 28px 16px;
+      text-align: center; font-size: 12px; color: var(--text-3);
+    }
+
+    /* Pre-generate empty state for whole output */
+    .output-empty {
+      grid-column: 1 / -1;
+      padding: 80px 32px; text-align: center;
+    }
+    .output-empty-icon { width: 44px; height: 44px; margin: 0 auto 14px; opacity: .2; }
+    .output-empty-title { font-size: 14px; font-weight: 500; color: var(--text-2); margin-bottom: 6px; }
+    .output-empty-sub { font-size: 12px; color: var(--text-3); }
+
+    /* ─── Mobile ─── */
+    @media (max-width: 860px) {
+      .menu-columns { grid-template-columns: 1fr; }
+      header { padding: 0 16px; }
+      .main { padding: 14px 14px 32px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="wordmark">
+    <span class="wordmark-name">Miru</span>
+    <span class="wordmark-sub">Staff Tools</span>
+  </div>
+  <nav class="page-nav">
+    <a href="/" class="nav-tab">Allergen Matrix</a>
+    <a href="/menu" class="nav-tab active">Menu Generator</a>
+  </nav>
+</header>
+
+<div class="main">
+
+  <!-- ── Allergen picker ── -->
+  <div class="picker-panel">
+    <div class="picker-head">
+      <span class="picker-label">Allergen Filter</span>
+      <span class="picker-badge" id="allergen-count">0 allergens selected</span>
+    </div>
+    <div class="diet-section">
+      <div class="diet-heading">Dietary Groups</div>
+      <div class="diet-grid" id="diet-grid"></div>
+    </div>
+    <div class="search-wrap">
+      <input class="search-input" type="search" id="allergen-search" placeholder="Search allergens…" autocomplete="off">
+    </div>
+    <div class="allergen-pills" id="allergens-list"></div>
+  </div>
+
+  <!-- ── Action bar ── -->
+  <div class="action-bar">
+    <button class="btn-generate" id="btn-generate">Generate Menu</button>
+    <button class="btn-reset" id="btn-reset">Reset</button>
+    <span class="action-hint" id="action-hint">Select allergens above, then click Generate Menu.</span>
+  </div>
+
+  <!-- ── Three-column output ── -->
+  <div class="menu-columns" id="menu-output">
+    <div class="output-empty">
+      <svg class="output-empty-icon" viewBox="0 0 44 44" fill="none">
+        <rect x="2" y="2" width="40" height="40" rx="4" stroke="currentColor" stroke-width="2"/>
+        <line x1="2" y1="12" x2="42" y2="12" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="16" y1="2" x2="16" y2="42" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="30" y1="2" x2="30" y2="42" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="8"  y1="20" x2="14" y2="20" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="8"  y1="28" x2="14" y2="28" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="21" y1="20" x2="28" y2="20" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="35" y1="20" x2="42" y2="20" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="35" y1="28" x2="42" y2="28" stroke="currentColor" stroke-width="1.5"/>
+      </svg>
+      <div class="output-empty-title">No menu generated yet</div>
+      <div class="output-empty-sub">Select allergens above, then click <strong>Generate Menu</strong></div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+  /* ═══ Data ═══ */
+  const ALL_ALLERGENS = {{ allergens_json | safe }};
+
+  const SECTION_COLORS = {
+    'Vegetables and Salads': '#D9EAD3',
+    'Signature Nigiri':      '#FFF2CC',
+    'Signature Raw':         '#FCE5CD',
+    'Tokyo Lunch':           '#FFE599',
+    'Brunch & Bar':          '#F9CB9C',
+    'Crispy Rice':           '#F6B26B',
+    'Skewers':               '#F1C232',
+    'Crunchy':               '#E69138',
+    'Rice and Noodles':      '#B45F06',
+    'Seafood':               '#B4A7D6',
+    'Prime Beef & Wagyu':    '#C27BA0',
+    'Luxury':                '#D5A6BD',
+    'Signature Maki':        '#D9D2E9',
+    'Hosomaki':              '#EAD1DC',
+    'Nigiri & Sashimi':      '#D5A6BD',
+    'Desserts':              '#76A5AF',
+  };
+
+  const DIETARY_GROUPS = [
+    { label: 'All Dairy',   allergens: ['Butter', 'Milk/Cream'] },
+    { label: 'All Seafood', allergens: ['Shellfish', 'Fin Fish'] },
+    { label: 'All Allium',  allergens: ['Garlic/Allium', 'Onion/Allium'] },
+    { label: 'Pescetarian', allergens: ['Poultry', 'Beef', 'Pork'] },
+    { label: 'Vegetarian',  allergens: ['Shellfish', 'Fin Fish', 'Poultry', 'Beef', 'Pork'] },
+    { label: 'Vegan',       allergens: ['Egg', 'Butter', 'Milk/Cream', 'Shellfish', 'Fin Fish', 'Poultry', 'Beef', 'Pork'] },
+    { label: 'Gluten-Free', allergens: ['Wheat/Gluten'] },
+    { label: 'Sesame-Free', allergens: ['Sesame Oil', 'Sesame Seeds'] },
+  ];
+
+  /* ═══ State ═══ */
+  const selectedAllergens = new Set();
+  const $ = id => document.getElementById(id);
+
+  /* ═══ Counts ═══ */
+  function updateCount() {
+    const n = selectedAllergens.size;
+    $('allergen-count').textContent = n === 0 ? '0 allergens selected'
+      : `${n} allergen${n !== 1 ? 's' : ''} selected`;
+  }
+
+  /* ═══ Allergen pills ═══ */
+  function renderAllergens() {
+    const el = $('allergens-list');
+    el.innerHTML = '';
+    for (const allergen of ALL_ALLERGENS) {
+      const btn = document.createElement('button');
+      btn.className = 'allergen-btn' + (selectedAllergens.has(allergen) ? ' selected' : '');
+      btn.textContent = allergen;
+      btn.dataset.allergen = allergen;
+      btn.addEventListener('click', () => {
+        const on = !selectedAllergens.has(allergen);
+        on ? selectedAllergens.add(allergen) : selectedAllergens.delete(allergen);
+        btn.classList.toggle('selected', on);
+        updateDietGroupStates();
+        updateCount();
+      });
+      el.appendChild(btn);
+    }
+  }
+
+  $('allergen-search').addEventListener('input', e => {
+    const fl = e.target.value.toLowerCase().trim();
+    document.querySelectorAll('.allergen-btn').forEach(btn => {
+      btn.classList.toggle('hidden', fl && !btn.dataset.allergen.toLowerCase().includes(fl));
+    });
+  });
+
+  /* ═══ Dietary groups ═══ */
+  function renderDietaryGroups() {
+    const grid = $('diet-grid');
+    grid.innerHTML = '';
+    for (const grp of DIETARY_GROUPS) {
+      const btn = document.createElement('button');
+      btn.className = 'diet-btn';
+      btn.textContent = grp.label;
+      btn.dataset.allergens = JSON.stringify(grp.allergens);
+      btn.addEventListener('click', () => {
+        const allOn = grp.allergens.every(a => selectedAllergens.has(a));
+        grp.allergens.forEach(a => allOn ? selectedAllergens.delete(a) : selectedAllergens.add(a));
+        document.querySelectorAll('.allergen-btn').forEach(b => {
+          b.classList.toggle('selected', selectedAllergens.has(b.dataset.allergen));
+        });
+        updateDietGroupStates();
+        updateCount();
+      });
+      grid.appendChild(btn);
+    }
+  }
+
+  function updateDietGroupStates() {
+    document.querySelectorAll('.diet-btn').forEach(btn => {
+      const als = JSON.parse(btn.dataset.allergens);
+      const all  = als.every(a => selectedAllergens.has(a));
+      const some = als.some(a => selectedAllergens.has(a));
+      btn.classList.toggle('diet-active',  all);
+      btn.classList.toggle('diet-partial', some && !all);
+    });
+  }
+
+  /* ═══ Reset ═══ */
+  $('btn-reset').addEventListener('click', () => {
+    selectedAllergens.clear();
+    $('allergen-search').value = '';
+    renderAllergens();
+    renderDietaryGroups();
+    updateCount();
+    $('action-hint').textContent = 'Select allergens above, then click Generate Menu.';
+    $('menu-output').innerHTML = emptyState();
+  });
+
+  /* ═══ Generate ═══ */
+  $('btn-generate').addEventListener('click', async () => {
+    const hint = $('action-hint');
+    if (!selectedAllergens.size) {
+      hint.textContent = 'Select at least one allergen.';
+      return;
+    }
+    hint.textContent = '';
+
+    const res = await fetch('/api/menu', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ allergens: [...selectedAllergens] }),
+    });
+    const data = await res.json();
+    renderMenu(data);
+  });
+
+  /* ═══ Render three columns ═══ */
+  function renderMenu(data) {
+    const out = $('menu-output');
+    out.innerHTML = '';
+
+    const cols = [
+      { key: 'clear', cls: 'col-clear', icon: '✓', name: 'Clear',   desc: 'Safe to serve as-is',    items: data.clear },
+      { key: 'mod',   cls: 'col-mod',   icon: '⚠', name: 'Mod / CC', desc: 'Requires kitchen notes', items: data.mod   },
+      { key: 'fail',  cls: 'col-fail',  icon: '✕', name: 'Fail',    desc: 'Cannot serve as-is',     items: data.fail  },
+    ];
+
+    for (const col of cols) {
+      out.appendChild(buildColumn(col));
+    }
+  }
+
+  function buildColumn({ cls, icon, name, desc, items }) {
+    const wrap = document.createElement('div');
+    wrap.className = 'menu-col';
+
+    /* Header */
+    const head = document.createElement('div');
+    head.className = `col-head ${cls}`;
+    head.innerHTML = `
+      <div class="col-icon">${icon}</div>
+      <div class="col-meta">
+        <div class="col-name">${name}</div>
+        <div class="col-desc">${desc}</div>
+      </div>
+      <div class="col-count">${items.length}</div>`;
+    wrap.appendChild(head);
+
+    /* Body */
+    const body = document.createElement('div');
+    body.className = 'col-body';
+
+    if (!items.length) {
+      body.innerHTML = `<div class="col-empty">No items</div>`;
+      wrap.appendChild(body);
+      return wrap;
+    }
+
+    /* Group by section (preserving menu order) */
+    const bySection = new Map();
+    for (const item of items) {
+      if (!bySection.has(item.section)) bySection.set(item.section, []);
+      bySection.get(item.section).push(item);
+    }
+
+    for (const [section, sectionItems] of bySection) {
+      const color = SECTION_COLORS[section] || '#888';
+      const group = document.createElement('div');
+      group.className = 'section-group';
+
+      group.innerHTML = `<div class="section-label">
+        <span class="sec-pip" style="background:${color}"></span>
+        ${section}
+      </div>`;
+
+      for (const item of sectionItems) {
+        const row = document.createElement('div');
+        row.className = 'menu-item';
+
+        let html = `<div class="item-name">${item.name}</div>`;
+
+        /* Flag badges — show for mod and fail columns */
+        const flags = Object.entries(item.flags || {});
+        if (flags.length) {
+          const badgesHtml = flags.map(([allergen, val]) => {
+            let cls, label;
+            if (val === 'X')   { cls = 'flag-x';   label = `✕ ${allergen}`; }
+            else if (val === 'MOD') { cls = 'flag-mod'; label = `MOD · ${allergen}`; }
+            else if (val === 'CC')  { cls = 'flag-cc';  label = `CC · ${allergen}`; }
+            else               { cls = 'flag-ing'; label = `${val} · ${allergen}`; }
+            return `<span class="flag-badge ${cls}">${label}</span>`;
+          }).join('');
+          html += `<div class="item-flags">${badgesHtml}</div>`;
+        }
+
+        /* Kitchen notes (if any) */
+        if (item.notes) {
+          html += `<div class="item-note">${item.notes}</div>`;
+        }
+
+        row.innerHTML = html;
+        group.appendChild(row);
+      }
+
+      body.appendChild(group);
+    }
+
+    wrap.appendChild(body);
+    return wrap;
+  }
+
+  /* ═══ Empty state HTML ═══ */
+  function emptyState() {
+    return `<div class="output-empty">
+      <svg class="output-empty-icon" viewBox="0 0 44 44" fill="none">
+        <rect x="2" y="2" width="40" height="40" rx="4" stroke="currentColor" stroke-width="2"/>
+        <line x1="2" y1="12" x2="42" y2="12" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="16" y1="2" x2="16" y2="42" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="30" y1="2" x2="30" y2="42" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="8"  y1="20" x2="14" y2="20" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="8"  y1="28" x2="14" y2="28" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="21" y1="20" x2="28" y2="20" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="35" y1="20" x2="42" y2="20" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="35" y1="28" x2="42" y2="28" stroke="currentColor" stroke-width="1.5"/>
+      </svg>
+      <div class="output-empty-title">No menu generated yet</div>
+      <div class="output-empty-sub">Select allergens above, then click <strong>Generate Menu</strong></div>
+    </div>`;
+  }
+
+  /* ═══ Init ═══ */
+  renderAllergens();
+  renderDietaryGroups();
+</script>
+</body>
+</html>

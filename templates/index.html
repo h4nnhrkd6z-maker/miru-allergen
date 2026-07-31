@@ -49,6 +49,15 @@
       text-transform: uppercase; color: var(--gold);
     }
     .wordmark-sub { font-size: 11px; color: var(--text-3); letter-spacing: .06em; text-transform: uppercase; }
+    .page-nav { display: flex; align-self: stretch; margin-left: 8px; }
+    .nav-tab {
+      display: flex; align-items: center; padding: 0 16px;
+      font-size: 12px; font-weight: 500; color: var(--text-3);
+      text-decoration: none; border-bottom: 2px solid transparent;
+      transition: color .15s, border-color .15s; white-space: nowrap;
+    }
+    .nav-tab:hover { color: var(--text-2); }
+    .nav-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
     .legend { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
     .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-2); white-space: nowrap; }
     .legend-pip { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
@@ -291,8 +300,12 @@
 <header>
   <div class="wordmark">
     <span class="wordmark-name">Miru</span>
-    <span class="wordmark-sub">Allergen Matrix</span>
+    <span class="wordmark-sub">Staff Tools</span>
   </div>
+  <nav class="page-nav">
+    <a href="/" class="nav-tab active">Allergen Matrix</a>
+    <a href="/menu" class="nav-tab">Menu Generator</a>
+  </nav>
   <div class="legend">
     <div class="legend-item"><div class="legend-pip" style="background:var(--red)"></div>Contains</div>
     <div class="legend-item"><div class="legend-pip" style="background:var(--amber)"></div>MOD / Via ingredient</div>
