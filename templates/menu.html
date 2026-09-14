@@ -164,115 +164,72 @@
     }
     .btn-print:hover { color: var(--text); border-color: var(--text-2); }
 
-    /* ─── Three-column output ─── */
-    .menu-columns {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 14px;
-      align-items: start;
-    }
-
-    .menu-col {
+    /* ─── Result panel + tabs ─── */
+    .result-panel {
       background: var(--surf-1); border: 1px solid var(--border);
       border-radius: 8px; overflow: hidden;
     }
 
-    /* Column head */
-    .col-head {
-      padding: 14px 16px;
-      display: flex; align-items: center; gap: 12px;
-      border-bottom: 1px solid var(--border);
+    .result-tab-bar {
+      display: flex; gap: 3px; padding: 4px;
+      background: var(--surf-2); border-bottom: 1px solid var(--border);
     }
-    .col-head.col-clear { background: var(--green-bg); border-bottom-color: rgba(76,175,130,.2); }
-    .col-head.col-mod   { background: var(--amber-bg); border-bottom-color: rgba(232,171,74,.2); }
-    .col-head.col-fail  { background: var(--red-bg);   border-bottom-color: rgba(240,112,112,.2); }
-
-    .col-icon { font-size: 20px; flex-shrink: 0; }
-    .col-clear .col-icon { color: var(--green); }
-    .col-mod   .col-icon { color: var(--amber); }
-    .col-fail  .col-icon { color: var(--red);   }
-
-    .col-meta { flex: 1; min-width: 0; }
-    .col-name {
-      font-size: 11px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: .1em; margin-bottom: 2px;
+    .result-tab {
+      flex: 1; padding: 10px 12px; border-radius: 5px;
+      border: none; background: transparent;
+      color: var(--text-3); font-size: 13px; font-weight: 500;
+      cursor: pointer; font-family: 'Inter', sans-serif;
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      transition: background .13s, color .13s;
     }
-    .col-clear .col-name { color: var(--green); }
-    .col-mod   .col-name { color: var(--amber); }
-    .col-fail  .col-name { color: var(--red);   }
-
-    .col-desc { font-size: 11px; color: var(--text-3); }
-
-    .col-count {
+    .result-tab:hover { background: rgba(255,255,255,.04); color: var(--text-2); }
+    .result-tab.t-clear.active { background: var(--green-bg); color: var(--green); box-shadow: inset 0 0 0 1px rgba(76,175,130,.25); }
+    .result-tab.t-mod.active   { background: var(--amber-bg); color: var(--amber); box-shadow: inset 0 0 0 1px rgba(232,171,74,.25); }
+    .result-tab.t-fail.active  { background: var(--red-bg);   color: var(--red);   box-shadow: inset 0 0 0 1px rgba(240,112,112,.25); }
+    .tab-count {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 22px; font-weight: 700; flex-shrink: 0;
+      font-size: 11px; font-weight: 600; opacity: .85;
     }
-    .col-clear .col-count { color: var(--green); }
-    .col-mod   .col-count { color: var(--amber); }
-    .col-fail  .col-count { color: var(--red);   }
 
-    /* Column body */
-    .col-body { padding: 8px 0 4px; }
+    .pane-body { padding: 8px 0 4px; }
 
-    /* Section group within a column */
+    /* Section group within a pane */
     .section-group { padding: 0 0 10px; }
     .section-label {
       display: flex; align-items: center; gap: 6px;
       padding: 7px 16px 5px;
       font-size: 9.5px; font-weight: 700;
       text-transform: uppercase; letter-spacing: .1em; color: var(--text-3);
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 4px;
+      border-bottom: 1px solid var(--border); margin-bottom: 4px;
     }
     .sec-pip { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
 
     /* Individual menu item row */
-    .menu-item {
-      padding: 6px 16px 5px;
-      border-bottom: 1px solid rgba(37,44,61,.5);
-    }
+    .menu-item { padding: 6px 16px 5px; border-bottom: 1px solid rgba(37,44,61,.5); }
     .menu-item:last-child { border-bottom: none; }
+    .item-name { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.35; }
 
-    .item-name {
-      font-size: 13px; font-weight: 500; color: var(--text);
-      line-height: 1.35;
-    }
-
-    /* Flag badges under item name (Mod/CC and Fail columns) */
+    /* Flag badges */
     .item-flags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
     .flag-badge {
-      display: inline-block;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px; font-weight: 600;
-      padding: 1px 6px; border-radius: 3px;
-      white-space: nowrap;
+      display: inline-block; font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 3px; white-space: nowrap;
     }
-    .flag-x   { background: var(--red-bg);    color: var(--red);    }
-    .flag-mod { background: var(--amber-bg);   color: var(--amber);  }
-    .flag-cc  { background: var(--orange-bg);  color: var(--orange); }
-    .flag-ing { background: var(--amber-bg);   color: var(--amber);  }
-
-    /* Item notes (small, below flags) */
+    .flag-x   { background: var(--red-bg);   color: var(--red);    }
+    .flag-mod { background: var(--amber-bg);  color: var(--amber);  }
+    .flag-cc  { background: var(--orange-bg); color: var(--orange); }
+    .flag-ing { background: var(--amber-bg);  color: var(--amber);  }
     .item-note { font-size: 10.5px; color: var(--text-3); font-style: italic; margin-top: 3px; }
 
-    /* Empty state for a column */
-    .col-empty {
-      padding: 28px 16px;
-      text-align: center; font-size: 12px; color: var(--text-3);
-    }
-
-    /* Pre-generate empty state for whole output */
-    .output-empty {
-      grid-column: 1 / -1;
-      padding: 80px 32px; text-align: center;
-    }
+    /* Empty states */
+    .col-empty { padding: 28px 16px; text-align: center; font-size: 12px; color: var(--text-3); }
+    .output-empty { padding: 80px 32px; text-align: center; }
     .output-empty-icon { width: 44px; height: 44px; margin: 0 auto 14px; opacity: .2; }
     .output-empty-title { font-size: 14px; font-weight: 500; color: var(--text-2); margin-bottom: 6px; }
     .output-empty-sub { font-size: 12px; color: var(--text-3); }
 
     /* ─── Mobile ─── */
     @media (max-width: 860px) {
-      .menu-columns { grid-template-columns: 1fr; }
       header { padding: 0 16px; }
       .main { padding: 14px 14px 32px; }
     }
@@ -316,8 +273,8 @@
     <span class="action-hint" id="action-hint">Select allergens above, then click Generate Menu.</span>
   </div>
 
-  <!-- ── Three-column output ── -->
-  <div class="menu-columns" id="menu-output">
+  <!-- ── Result output ── -->
+  <div class="result-panel" id="menu-output">
     <div class="output-empty">
       <svg class="output-empty-icon" viewBox="0 0 44 44" fill="none">
         <rect x="2" y="2" width="40" height="40" rx="4" stroke="currentColor" stroke-width="2"/>
@@ -476,99 +433,92 @@
     renderMenu(data);
   });
 
-  /* ═══ Render three columns ═══ */
+  /* ═══ Render tabbed output ═══ */
   function renderMenu(data) {
     const out = $('menu-output');
     out.innerHTML = '';
 
-    const cols = [
-      { key: 'clear', cls: 'col-clear', icon: '✓', name: 'Clear',   desc: 'Safe to serve as-is',    items: data.clear },
-      { key: 'mod',   cls: 'col-mod',   icon: '⚠', name: 'Mod / CC', desc: 'Requires kitchen notes', items: data.mod   },
-      { key: 'fail',  cls: 'col-fail',  icon: '✕', name: 'Fail',    desc: 'Cannot serve as-is',     items: data.fail  },
+    const cats = [
+      { key: 'clear', cls: 't-clear', icon: '✓', items: data.clear, label: 'Clear'    },
+      { key: 'mod',   cls: 't-mod',   icon: '⚠', items: data.mod,   label: 'Mod / CC' },
+      { key: 'fail',  cls: 't-fail',  icon: '✕', items: data.fail,  label: 'Fail'     },
     ];
 
-    for (const col of cols) {
-      out.appendChild(buildColumn(col));
-    }
+    /* Tab bar */
+    const tabBar = document.createElement('div');
+    tabBar.className = 'result-tab-bar';
+
+    cats.forEach((cat, i) => {
+      const btn = document.createElement('button');
+      btn.className = `result-tab ${cat.cls}${i === 0 ? ' active' : ''}`;
+      btn.dataset.tab = cat.key;
+      btn.innerHTML = `${cat.icon} ${cat.label} <span class="tab-count">${cat.items.length}</span>`;
+      btn.addEventListener('click', () => switchResultTab(cat.key));
+      tabBar.appendChild(btn);
+    });
+    out.appendChild(tabBar);
+
+    /* Panes */
+    cats.forEach((cat, i) => {
+      const pane = document.createElement('div');
+      pane.id = `pane-${cat.key}`;
+      if (i !== 0) pane.style.display = 'none';
+
+      if (!cat.items.length) {
+        pane.innerHTML = `<div class="col-empty">No items in this category</div>`;
+      } else {
+        const body = document.createElement('div');
+        body.className = 'pane-body';
+
+        const bySection = new Map();
+        for (const item of cat.items) {
+          if (!bySection.has(item.section)) bySection.set(item.section, []);
+          bySection.get(item.section).push(item);
+        }
+
+        for (const [section, sectionItems] of bySection) {
+          const color = SECTION_COLORS[section] || '#888';
+          const group = document.createElement('div');
+          group.className = 'section-group';
+          group.innerHTML = `<div class="section-label">
+            <span class="sec-pip" style="background:${color}"></span>${section}
+          </div>`;
+
+          for (const item of sectionItems) {
+            const row = document.createElement('div');
+            row.className = 'menu-item';
+            let html = `<div class="item-name">${item.name}</div>`;
+            const flags = Object.entries(item.flags || {});
+            if (flags.length) {
+              html += `<div class="item-flags">${flags.map(([allergen, val]) => {
+                let cls, label;
+                if (val === 'X')        { cls = 'flag-x';   label = `✕ ${allergen}`; }
+                else if (val === 'MOD') { cls = 'flag-mod'; label = `MOD · ${allergen}`; }
+                else if (val === 'CC')  { cls = 'flag-cc';  label = `CC · ${allergen}`; }
+                else                    { cls = 'flag-ing'; label = `${val} · ${allergen}`; }
+                return `<span class="flag-badge ${cls}">${label}</span>`;
+              }).join('')}</div>`;
+            }
+            if (item.notes) html += `<div class="item-note">${item.notes}</div>`;
+            row.innerHTML = html;
+            group.appendChild(row);
+          }
+          body.appendChild(group);
+        }
+        pane.appendChild(body);
+      }
+      out.appendChild(pane);
+    });
   }
 
-  function buildColumn({ cls, icon, name, desc, items }) {
-    const wrap = document.createElement('div');
-    wrap.className = 'menu-col';
-
-    /* Header */
-    const head = document.createElement('div');
-    head.className = `col-head ${cls}`;
-    head.innerHTML = `
-      <div class="col-icon">${icon}</div>
-      <div class="col-meta">
-        <div class="col-name">${name}</div>
-        <div class="col-desc">${desc}</div>
-      </div>
-      <div class="col-count">${items.length}</div>`;
-    wrap.appendChild(head);
-
-    /* Body */
-    const body = document.createElement('div');
-    body.className = 'col-body';
-
-    if (!items.length) {
-      body.innerHTML = `<div class="col-empty">No items</div>`;
-      wrap.appendChild(body);
-      return wrap;
-    }
-
-    /* Group by section (preserving menu order) */
-    const bySection = new Map();
-    for (const item of items) {
-      if (!bySection.has(item.section)) bySection.set(item.section, []);
-      bySection.get(item.section).push(item);
-    }
-
-    for (const [section, sectionItems] of bySection) {
-      const color = SECTION_COLORS[section] || '#888';
-      const group = document.createElement('div');
-      group.className = 'section-group';
-
-      group.innerHTML = `<div class="section-label">
-        <span class="sec-pip" style="background:${color}"></span>
-        ${section}
-      </div>`;
-
-      for (const item of sectionItems) {
-        const row = document.createElement('div');
-        row.className = 'menu-item';
-
-        let html = `<div class="item-name">${item.name}</div>`;
-
-        /* Flag badges — show for mod and fail columns */
-        const flags = Object.entries(item.flags || {});
-        if (flags.length) {
-          const badgesHtml = flags.map(([allergen, val]) => {
-            let cls, label;
-            if (val === 'X')   { cls = 'flag-x';   label = `✕ ${allergen}`; }
-            else if (val === 'MOD') { cls = 'flag-mod'; label = `MOD · ${allergen}`; }
-            else if (val === 'CC')  { cls = 'flag-cc';  label = `CC · ${allergen}`; }
-            else               { cls = 'flag-ing'; label = `${val} · ${allergen}`; }
-            return `<span class="flag-badge ${cls}">${label}</span>`;
-          }).join('');
-          html += `<div class="item-flags">${badgesHtml}</div>`;
-        }
-
-        /* Kitchen notes (if any) */
-        if (item.notes) {
-          html += `<div class="item-note">${item.notes}</div>`;
-        }
-
-        row.innerHTML = html;
-        group.appendChild(row);
-      }
-
-      body.appendChild(group);
-    }
-
-    wrap.appendChild(body);
-    return wrap;
+  function switchResultTab(key) {
+    document.querySelectorAll('.result-tab').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.tab === key);
+    });
+    ['clear', 'mod', 'fail'].forEach(k => {
+      const pane = document.getElementById(`pane-${k}`);
+      if (pane) pane.style.display = k === key ? '' : 'none';
+    });
   }
 
   /* ═══ Empty state HTML ═══ */
