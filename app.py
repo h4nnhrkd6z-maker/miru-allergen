@@ -57,7 +57,7 @@ def parse_allergen_matrix(filepath: str):
 
 # Parse once at startup
 _data_path = os.path.join(
-    os.path.dirname(__file__), "data", "Miru_Allergen_Matrix_6_29_26.xlsx"
+    os.path.dirname(__file__), "data", "Miru_Allergen_Matrix_9_2_26.xlsx"
 )
 ALLERGEN_COLS, MENU_ITEMS = parse_allergen_matrix(_data_path)
 
