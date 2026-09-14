@@ -50,15 +50,25 @@
     }
     .wordmark-sub { font-size: 11px; color: var(--text-3); letter-spacing: .06em; text-transform: uppercase; }
     .wordmark-date { font-size: 11px; color: var(--text-3); padding-left: 8px; border-left: 1px solid var(--border-hi); margin-left: 2px; }
-    .page-nav { display: flex; align-self: stretch; margin-left: 8px; }
-    .nav-tab {
-      display: flex; align-items: center; padding: 0 16px;
-      font-size: 12px; font-weight: 500; color: var(--text-3);
-      text-decoration: none; border-bottom: 2px solid transparent;
-      transition: color .15s, border-color .15s; white-space: nowrap;
+    .tab-bar {
+      display: flex; gap: 3px;
+      background: var(--surf-1); border: 1px solid var(--border);
+      border-radius: 8px; padding: 4px;
+      margin-bottom: 16px;
     }
-    .nav-tab:hover { color: var(--text-2); }
-    .nav-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+    .tab-btn {
+      flex: 1; padding: 9px 16px; border-radius: 5px;
+      border: none; background: transparent;
+      color: var(--text-3); font-size: 13px; font-weight: 500;
+      cursor: pointer; font-family: 'Inter', sans-serif;
+      text-decoration: none; text-align: center;
+      transition: background .13s, color .13s;
+    }
+    .tab-btn:hover { background: var(--surf-3); color: var(--text-2); }
+    .tab-btn.active {
+      background: var(--surf-2); color: var(--gold);
+      box-shadow: inset 0 0 0 1px var(--border-hi);
+    }
     .legend { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
     .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-2); white-space: nowrap; }
     .legend-pip { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
@@ -312,10 +322,6 @@
     <span class="wordmark-sub">Staff Tools</span>
     <span class="wordmark-date">Sep 2, 2026</span>
   </div>
-  <nav class="page-nav">
-    <a href="/" class="nav-tab active">Allergen Matrix</a>
-    <a href="/menu" class="nav-tab">Menu Generator</a>
-  </nav>
   <div class="legend">
     <div class="legend-item"><div class="legend-pip" style="background:var(--red)"></div>Contains</div>
     <div class="legend-item"><div class="legend-pip" style="background:var(--amber)"></div>MOD / Via ingredient</div>
@@ -325,6 +331,10 @@
 </header>
 
 <div class="main">
+  <div class="tab-bar">
+    <a href="/" class="tab-btn active">Allergen Matrix</a>
+    <a href="/menu" class="tab-btn">Menu Generator</a>
+  </div>
   <div class="selectors">
 
     <!-- ── Items panel ── -->
