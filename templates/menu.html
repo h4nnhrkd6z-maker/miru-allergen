@@ -155,14 +155,7 @@
       transition: color .12s, border-color .12s;
     }
     .btn-reset:hover { color: var(--text-2); border-color: var(--border-hi); }
-    .btn-print {
-      padding: 10px 16px; background: transparent;
-      color: var(--text-2); border: 1px solid var(--border-hi);
-      border-radius: 6px; font-size: 13px;
-      cursor: pointer; font-family: 'Inter', sans-serif;
-      transition: color .12s, border-color .12s;
-    }
-    .btn-print:hover { color: var(--text); border-color: var(--text-2); }
+    .action-hint { font-size: 12px; color: var(--text-3); }
 
     /* ─── Result panel + tabs ─── */
     .result-panel {
@@ -270,7 +263,6 @@
   <div class="action-bar">
     <button class="btn-generate" id="btn-generate">Generate Menu</button>
     <button class="btn-reset" id="btn-reset">Reset</button>
-    <button class="btn-print" id="btn-print" style="display:none">🖨 Print</button>
     <span class="action-hint" id="action-hint">Select allergens above, then click Generate Menu.</span>
   </div>
 
@@ -406,14 +398,9 @@
     renderAllergens();
     renderDietaryGroups();
     updateCount();
-    lastMenuData = null;
-    $('btn-print').style.display = 'none';
     $('action-hint').textContent = 'Select allergens above, then click Generate Menu.';
     $('menu-output').innerHTML = emptyState();
   });
-
-  /* ═══ Generate ═══ */
-  let lastMenuData = null;
 
   $('btn-generate').addEventListener('click', async () => {
     const hint = $('action-hint');
@@ -429,8 +416,6 @@
       body: JSON.stringify({ allergens: [...selectedAllergens] }),
     });
     const data = await res.json();
-    lastMenuData = data;
-    $('btn-print').style.display = '';
     renderMenu(data);
   });
 
@@ -545,93 +530,7 @@
   renderAllergens();
   renderDietaryGroups();
 
-  /* ═══ Print ═══ */
-  $('btn-print').addEventListener('click', () => { if (lastMenuData) printMenu(lastMenuData); });
 
-  function printMenu({ clear, mod, fail, allergens }) {
-    const dateStr = new Date().toLocaleString('en-US', {
-      month:'short', day:'numeric', year:'numeric', hour:'2-digit', minute:'2-digit'
-    });
-
-    let body = `
-      <div class="c lg b">MIRU</div>
-      <div class="c b">ALLERGEN MENU GUIDE</div>
-      <div class="c sm">${dateStr}</div>
-      <hr class="solid">
-      <div class="sm b mt4">Allergens checked:</div>
-      <div class="ind sm mt2">${allergens.join(' &middot; ')}</div>
-      <hr class="solid">`;
-
-    body += renderCategory(clear, '✓ CLEAR',   `${clear.length} items &mdash; Safe to serve`);
-    body += renderCategory(mod,   '⚠ MOD/CC',  `${mod.length} items &mdash; Kitchen notes`);
-    body += renderCategory(fail,  '✕ FAIL',    `${fail.length} items &mdash; Cannot serve`);
-
-    body += `<hr class="solid"><div class="c sm mt4">MIRU Restaurant</div>`;
-    openReceipt(body);
-  }
-
-  function renderCategory(items, heading, subline) {
-    if (!items.length) return `
-      <div class="row b mt6"><span>${heading}</span><span>0</span></div>
-      <div class="sm ind">${subline}</div><hr>`;
-
-    const bySection = new Map();
-    for (const item of items) {
-      if (!bySection.has(item.section)) bySection.set(item.section, []);
-      bySection.get(item.section).push(item);
-    }
-
-    let html = `
-      <div class="b mt6">${heading}</div>
-      <div class="sm">${subline}</div>
-      <hr>`;
-
-    for (const [section, secItems] of bySection) {
-      html += `<div class="sec-head mt4">${section}</div>`;
-      for (const item of secItems) {
-        html += `<div class="ind mt2"><span>${item.name}</span>`;
-        const flags = Object.entries(item.flags || {});
-        for (const [allergen, val] of flags) {
-          let label;
-          if (val === 'X')        label = `&#x2715; CONTAINS &middot; ${allergen}`;
-          else if (val === 'MOD') label = `MOD &middot; ${allergen}`;
-          else if (val === 'CC')  label = `CC Risk &middot; ${allergen}`;
-          else                    label = `${val} &middot; ${allergen}`;
-          html += `<div class="ind flag sm">${label}</div>`;
-        }
-        html += `</div>`;
-      }
-      html += `<hr>`;
-    }
-    return html;
-  }
-
-  function openReceipt(bodyHtml) {
-    const css = `
-      @page { size: 80mm auto; margin: 3mm 4mm 8mm; }
-      * { box-sizing: border-box; margin: 0; padding: 0; }
-      body { font-family: 'Courier New', Courier, monospace; font-size: 8.5pt;
-             line-height: 1.4; color: #000; background: #fff; width: 100%; }
-      .c  { text-align: center; }  .b { font-weight: bold; }
-      .lg { font-size: 10.5pt; }   .sm { font-size: 7.5pt; }
-      .mt2 { margin-top: 2px; } .mt4 { margin-top: 4px; } .mt6 { margin-top: 6px; }
-      .ind { padding-left: 8px; } .ind2 { padding-left: 14px; }
-      hr { border: none; border-top: 1px dashed #000; margin: 3px 0; }
-      hr.solid { border-top: 2px solid #000; margin: 4px 0; }
-      .row { display: flex; justify-content: space-between; gap: 4px; }
-      .row .val { flex-shrink: 0; }
-      .sec-head { font-weight: bold; font-size: 7pt; text-transform: uppercase;
-                  letter-spacing: .08em; }
-      .flag { padding-left: 8px; }`;
-
-    const win = window.open('', '_blank');
-    win.document.open();
-    win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
-      <title>Miru Receipt</title><style>${css}</style></head>
-      <body>${bodyHtml}</body></html>`);
-    win.document.close();
-    setTimeout(() => win.print(), 400);
-  }
 </script>
 </body>
 </html>
