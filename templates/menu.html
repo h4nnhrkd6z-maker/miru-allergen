@@ -208,6 +208,7 @@
     .menu-item { padding: 6px 16px 5px; border-bottom: 1px solid rgba(37,44,61,.5); }
     .menu-item:last-child { border-bottom: none; }
     .item-name { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.35; }
+    .clear-check { color: var(--green); margin-right: 5px; }
 
     /* Flag badges */
     .item-flags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
@@ -487,7 +488,7 @@
           for (const item of sectionItems) {
             const row = document.createElement('div');
             row.className = 'menu-item';
-            let html = `<div class="item-name">${item.name}</div>`;
+            let html = `<div class="item-name">${cat.key === 'clear' ? '<span class="clear-check">✓</span>' : ''}${item.name}</div>`;
             const flags = Object.entries(item.flags || {});
             if (flags.length) {
               html += `<div class="item-flags">${flags.map(([allergen, val]) => {
